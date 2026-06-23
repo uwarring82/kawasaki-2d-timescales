@@ -79,8 +79,11 @@ and `logbook/`. M2/M3 confirm diffusive coarsening: `L = R₀ + (λt)^{1/3}` fit
 `L_C`, `L_S`, `L_E` to R² > 0.99 at every size, and `(L_S−R₀)/N` vs `t/N³`
 collapses across sizes once the offset is controlled. The free exponent is
 stated as illustrative (≈ 1/3, not precision-pinned at these sizes, per the task
-card). The equilibration diagnostic flags (as designed) that the near-`T_c`
-`T_i=2.4` leg needs more preparation sweeps before Milestone 4.
+card). M4 (initial-temperature sweep) adds an independent-chains equilibration
+gate (all five `T_i` legs validated; the earlier `T_i=2.4` flag was a
+correlated-sampling artifact) and the common-protocol sweep: initial correlation
+length rises sharply toward `T_c`, and the `L_S(t)` curves are strictly ordered
+with no raw crossing — leaving the offset-corrected crossing test to Milestone 5.
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

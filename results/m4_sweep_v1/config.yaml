@@ -1,0 +1,68 @@
+T_i_legs:
+- T_i: 2.4
+  candidates:
+  - 1000
+  - 2000
+  - 4000
+  - 8000
+  ref_burn: 16000
+- T_i: 2.8
+  candidates:
+  - 1000
+  - 2000
+  - 4000
+  - 8000
+  ref_burn: 16000
+- T_i: 3.5
+  candidates:
+  - 500
+  - 1000
+  - 2000
+  - 4000
+  ref_burn: 8000
+- T_i: 5.0
+  candidates:
+  - 250
+  - 500
+  - 1000
+  - 2000
+  ref_burn: 4000
+- T_i: 10.0
+  candidates:
+  - 250
+  - 500
+  - 1000
+  - 2000
+  ref_burn: 4000
+calibration:
+  ks_alpha: 0.05
+  mean_sigma: 4.0
+  n_ref_samples: 50
+  n_test_chains: 40
+  ref_spacing_tau_mult: 6
+  safety_tau_mult: 30
+description: Ensemble post-quench trajectories for the T_i grid at common T_f, on
+  initial states validated by an independent-chains equilibration gate (energy AND
+  C(r) correlation length). N is fixed; M=0 is conserved exactly. The non-local prep
+  kernel samples the fixed-M canonical equilibrium (detailed balance proven on the
+  4x4 sector); the gate certifies the per-T_i prep budget converges it.
+einf:
+  kernel: nonlocal
+  n_samples: 40
+  sample_every: 120
+  sweeps_burn: 10000
+ensemble:
+  n_realisations: 12
+  seed: 40404
+model:
+  N: 64
+  magnetisation: 0
+preparation:
+  kernel: nonlocal
+quench:
+  T_f: 1.36
+  schedule:
+    n_points: 42
+    t_max: 8000
+run_id_calibration: m4_equilibration_v1
+run_id_sweep: m4_sweep_v1

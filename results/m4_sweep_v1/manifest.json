@@ -1,0 +1,141 @@
+{
+  "run_id": "m4_sweep_v1",
+  "timestamp": "2026-06-23T21:28:19Z",
+  "config": {
+    "run_id_calibration": "m4_equilibration_v1",
+    "run_id_sweep": "m4_sweep_v1",
+    "description": "Ensemble post-quench trajectories for the T_i grid at common T_f, on initial states validated by an independent-chains equilibration gate (energy AND C(r) correlation length). N is fixed; M=0 is conserved exactly. The non-local prep kernel samples the fixed-M canonical equilibrium (detailed balance proven on the 4x4 sector); the gate certifies the per-T_i prep budget converges it.",
+    "model": {
+      "N": 64,
+      "magnetisation": 0
+    },
+    "quench": {
+      "T_f": 1.36,
+      "schedule": {
+        "t_max": 8000,
+        "n_points": 42
+      }
+    },
+    "preparation": {
+      "kernel": "nonlocal"
+    },
+    "T_i_legs": [
+      {
+        "T_i": 2.4,
+        "candidates": [
+          1000,
+          2000,
+          4000,
+          8000
+        ],
+        "ref_burn": 16000
+      },
+      {
+        "T_i": 2.8,
+        "candidates": [
+          1000,
+          2000,
+          4000,
+          8000
+        ],
+        "ref_burn": 16000
+      },
+      {
+        "T_i": 3.5,
+        "candidates": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "ref_burn": 8000
+      },
+      {
+        "T_i": 5.0,
+        "candidates": [
+          250,
+          500,
+          1000,
+          2000
+        ],
+        "ref_burn": 4000
+      },
+      {
+        "T_i": 10.0,
+        "candidates": [
+          250,
+          500,
+          1000,
+          2000
+        ],
+        "ref_burn": 4000
+      }
+    ],
+    "calibration": {
+      "n_test_chains": 40,
+      "n_ref_samples": 50,
+      "ref_spacing_tau_mult": 6,
+      "ks_alpha": 0.05,
+      "mean_sigma": 4.0,
+      "safety_tau_mult": 30
+    },
+    "einf": {
+      "kernel": "nonlocal",
+      "sweeps_burn": 10000,
+      "sample_every": 120,
+      "n_samples": 40
+    },
+    "ensemble": {
+      "n_realisations": 12,
+      "seed": 40404
+    }
+  },
+  "config_hash": "d3fb5c110efaac9a758ef841788dd8ef1cd7db5c002f846ca89ada51592a2494",
+  "seeds": {
+    "base": 40404,
+    "prep_budgets": {
+      "2.4": 2000,
+      "2.8": 1000,
+      "3.5": 500,
+      "5.0": 250,
+      "10.0": 250
+    }
+  },
+  "git": {
+    "commit": "f04ab2e66f5dc7ac66c6952b7ad603076f569817",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "0.1.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "trajectory_Ti2.4": "bd86ce1ef9ac63c5baf159f65d1e373a62082a881119a9fc5191f5ca23106b27",
+    "trajectory_Ti2.8": "9be7dcb6d54093c9185c019ceb742b3f5bad38e37e696cdbe80cf0216b3093bd",
+    "trajectory_Ti3.5": "c8de848d62677aa7587be137b64cdacd32b1b9f5bb99dd96ac05a559e1ff3776",
+    "trajectory_Ti5.0": "6fe8e506cc8806d82822c8e11719af4eed1edd6d849fb0b5012afc2ff194485d",
+    "trajectory_Ti10.0": "d70e35cd76bcfcbe07c5114b6d47077ee042430bb894f0383c6feb920591681c",
+    "temperature_sweep": "906fa0fdca0efb5f467432ff4567e85665dc0ba9ad6999f8d544113e40c99ba1",
+    "sweep_summary": "750a96cf5fb0cdc88f5582801e3400600c47086e3eebb2132ace32f10d567004"
+  },
+  "schema_version": "1.0",
+  "notes": "M4 Phase B: common-protocol initial-temperature sweep"
+}

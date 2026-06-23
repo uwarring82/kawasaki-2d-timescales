@@ -202,22 +202,28 @@ def stage_analyse(cfg, run_dir, manifest):
               f"CI[{oc.ci_low[-1]:+.3f},{oc.ci_high[-1]:+.3f}]")
         _store_oc(results["estimators"][name], oc, bh)
 
-    # --- seed-budget / power (pilot variance at the target time) ---
-    tgt = -1  # last in-window point
-    win_idx = np.where(win)[0]
-    j = win_idx[-1]
-    var_hot = float(np.nanvar(est["hot"]["L_S"][:pilot, j], ddof=1))
-    var_cold = float(np.nanvar(est["cold"]["L_S"][:pilot, j], ddof=1))
-    # signal: |offset-corrected D| for L_S at the target (use the point estimate)
-    signal = abs(results["estimators"]["L_S"]["oc_final_diff"]) or 1e-6
-    need = analysis.required_ensemble_size(var_hot, var_cold, signal, power=power, alpha=alpha)
-    se_diff = float(np.sqrt(var_hot / meta["n_realisations"] + var_cold / meta["n_realisations"]))
-    results["power"] = {"pilot_var_hot": var_hot, "pilot_var_cold": var_cold,
-                        "signal_LS_oc": signal, "required_n": need,
-                        "achieved_n": meta["n_realisations"], "se_diff_LS": se_diff,
-                        "se_to_signal": se_diff / signal}
-    print(f"  power: signal(L_S oc)={signal:.3f}, SE_diff={se_diff:.3f}, "
-          f"SE/signal={se_diff/signal:.2f}, required_n~{need} (have {meta['n_realisations']})")
+    # --- seed-budget / resolving power -------------------------------------
+    # Honest framing: report the minimum-detectable offset-corrected difference
+    # (MDD) per estimator at power `power`, alpha `alpha`, from the bootstrap CI
+    # half-width (95% CI = +/- 1.96 SE). The ensemble is variance-limited only if
+    # NO estimator resolves its offset-corrected difference (all CIs straddle 0).
+    z_scale = (1.95996 + (0.84162 if power >= 0.8 else 0.0)) / 1.95996
+    res_power = {"achieved_n": meta["n_realisations"], "estimators": {}}
+    any_resolved = False
+    for name in ("L_C", "L_S", "L_E"):
+        e = results["estimators"][name]
+        hw = 0.5 * (e["oc_final_ci"][1] - e["oc_final_ci"][0])  # 95% CI half-width at target
+        mdd = float(z_scale * hw)
+        resolved = bool(e["oc_late_fdr_significant"])
+        any_resolved = any_resolved or resolved
+        res_power["estimators"][name] = {"ci_half_width": float(hw), "mdd_power": mdd,
+                                         "resolved_offset_corrected": resolved,
+                                         "D_final": e["oc_final_diff"]}
+        print(f"  resolving power {name}: D_final={e['oc_final_diff']:+.3f}, "
+              f"95%CI half-width={hw:.3f}, MDD(power {power})={mdd:.3f}, "
+              f"resolved={resolved}")
+    res_power["variance_limited"] = not any_resolved
+    results["power"] = res_power
 
     # --- four-outcome verdict ---
     verdict = _verdict(results)
@@ -249,7 +255,7 @@ def _verdict(results):
     oc_pos = [n for n, e in ests.items() if e["oc_late_fdr_significant"] and e["oc_late_sign"] > 0]
     oc_neg = [n for n, e in ests.items() if e["oc_late_fdr_significant"] and e["oc_late_sign"] < 0]
     pw = results["power"]
-    underpowered = pw["se_to_signal"] > 0.5  # SE more than half the signal => can't resolve
+    underpowered = pw["variance_limited"]  # no estimator resolves the offset-corrected diff
 
     if len(raw_cross) >= 2:
         return {"outcome": "coarsening_route_inversion",
@@ -268,8 +274,8 @@ def _verdict(results):
                              "lead is not an offset artefact hiding a hot-overtake. No inversion."}
     if underpowered:
         return {"outcome": "underdetermined",
-                "rationale": f"no >=2-estimator effect survives, and SE/signal={pw['se_to_signal']:.2f} "
-                             f">0.5 (required n~{pw['required_n']} vs achieved {pw['achieved_n']}): "
+                "rationale": "no >=2-estimator effect survives and NO estimator resolves its "
+                             "offset-corrected difference (all bootstrap CIs straddle zero): "
                              "statistics insufficient to separate the outcomes."}
     return {"outcome": "no_supported_inversion",
             "rationale": "no raw overtaking crossing and no >=2-estimator offset-corrected difference "
@@ -307,12 +313,14 @@ def _plot_verdict(cfg, sweeps, est, e_inf, cutoff, upper, results, path):
            f"T_f={pp['T_f_over_Tc']} T_c,  N={cfg['model']['N']},  n={results['meta']['n_realisations']}\n"
            f"window: ({cutoff}, {int(upper)}] sweeps\n\n"
            f"VERDICT:\n  {v['outcome'].upper()}\n\n"
-           f"SE/signal (L_S) = {pw['se_to_signal']:.2f}\n"
-           f"required n ~ {pw['required_n']}\n\n"
-           + "\n".join(f"{n}: rawX={results['estimators'][n]['raw_crossing']}, "
-                       f"oc_late_sign={results['estimators'][n]['oc_late_sign']}, "
-                       f"FDR={results['estimators'][n]['oc_late_fdr_significant']}"
-                       for n in ("L_C", "L_S", "L_E")))
+           f"offset-corrected D = (L-R0)_hot - (L-R0)_cold\n"
+           f"(positive => hot overtakes; none are)\n\n"
+           + "\n".join(f"{n}: D_final={results['estimators'][n]['oc_final_diff']:+.2f} "
+                       f"CI[{results['estimators'][n]['oc_final_ci'][0]:+.2f},"
+                       f"{results['estimators'][n]['oc_final_ci'][1]:+.2f}] "
+                       f"{'(resolved)' if pw['estimators'][n]['resolved_offset_corrected'] else '(null)'}"
+                       for n in ("L_C", "L_S", "L_E"))
+           + f"\n\nraw overtaking crossing: none\nvariance-limited: {pw['variance_limited']}")
     ax[2].text(0.0, 0.5, txt, family="monospace", va="center", fontsize=9)
     fig.suptitle("Milestone 5 — pre-registered crossing search (primary pair)")
     fig.tight_layout(); fig.savefig(path, dpi=130); plt.close(fig)

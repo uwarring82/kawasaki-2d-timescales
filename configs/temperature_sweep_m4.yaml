@@ -1,0 +1,41 @@
+# Milestone 4 — initial-temperature sweep at common T_f.
+# Phase A calibrates a per-T_i preparation budget via an independent-chains
+# equilibration gate; Phase B runs the common-protocol quench sweep on the
+# validated initial states. Only T_i (and its gated prep budget) varies.
+run_id_calibration: m4_equilibration_v1
+run_id_sweep: m4_sweep_v1
+description: >-
+  Ensemble post-quench trajectories for the T_i grid at common T_f, on initial
+  states validated by an independent-chains equilibration gate (energy AND C(r)
+  correlation length). N is fixed; M=0 is conserved exactly. The non-local prep
+  kernel samples the fixed-M canonical equilibrium (detailed balance proven on
+  the 4x4 sector); the gate certifies the per-T_i prep budget converges it.
+model:
+  N: 64
+  magnetisation: 0
+quench:
+  T_f: 1.36                  # ≈ 0.6 T_c, common to every T_i
+  schedule: {t_max: 8000, n_points: 42}
+preparation:
+  kernel: nonlocal
+# Per-T_i equilibration legs (candidates bracket the convergence budget).
+T_i_legs:
+  - {T_i: 2.4,  candidates: [1000, 2000, 4000, 8000], ref_burn: 16000}
+  - {T_i: 2.8,  candidates: [1000, 2000, 4000, 8000], ref_burn: 16000}
+  - {T_i: 3.5,  candidates: [500, 1000, 2000, 4000],  ref_burn: 8000}
+  - {T_i: 5.0,  candidates: [250, 500, 1000, 2000],   ref_burn: 4000}
+  - {T_i: 10.0, candidates: [250, 500, 1000, 2000],   ref_burn: 4000}
+calibration:
+  n_test_chains: 30          # independent chains per candidate budget (one sample each)
+  n_ref_samples: 40          # decorrelated samples from a long reference chain
+  ref_spacing_tau_mult: 6    # reference sample spacing = this * tau_E
+  ks_alpha: 0.05
+  safety_tau_mult: 30        # prep budget also >= this * tau_E (covers autocorrelation)
+einf:                        # E_inf(N, T_f, M); common to all T_i
+  kernel: nonlocal
+  sweeps_burn: 10000
+  sample_every: 120
+  n_samples: 40
+ensemble:
+  n_realisations: 12
+  seed: 40404

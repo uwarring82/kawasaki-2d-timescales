@@ -60,6 +60,65 @@ def energy_trace(
     return np.asarray(sweeps), np.asarray(energies)
 
 
+def integrated_autocorrelation_time(samples: np.ndarray, *, c: float = 5.0) -> float:
+    """Integrated autocorrelation time ``τ_int`` (in units of the sample spacing).
+
+    ``τ_int = 1 + 2 Σ_{k≥1} ρ(k)`` with Sokal's automatic windowing: the sum is
+    truncated at the smallest window ``W`` satisfying ``W ≥ c·τ_int(W)``. The
+    autocorrelation ``ρ(k)`` is computed via FFT. Returns ``1.0`` for a
+    degenerate (constant) series.
+    """
+    x = np.asarray(samples, float)
+    x = x - x.mean()
+    n = x.size
+    if n < 4 or np.allclose(x, 0.0):
+        return 1.0
+    # autocovariance via zero-padded FFT
+    size = 1
+    while size < 2 * n:
+        size *= 2
+    f = np.fft.rfft(x, size)
+    acf = np.fft.irfft(f * np.conjugate(f), size)[:n].real
+    if acf[0] == 0:
+        return 1.0
+    acf /= acf[0]
+    tau = 1.0
+    for w in range(1, n):
+        tau = 1.0 + 2.0 * float(np.sum(acf[1:w + 1]))
+        if w >= c * tau:
+            break
+    return max(1.0, tau)
+
+
+def measure_autocorrelation_sweeps(
+    n: int,
+    T: float,
+    magnetisation: int,
+    rng: np.random.Generator,
+    *,
+    kernel: str = "nonlocal",
+    burn: int = 8000,
+    n_samples: int = 6000,
+    sample_every: int = 2,
+) -> tuple[float, np.ndarray]:
+    """Measure the energy autocorrelation time of the prep kernel, in **sweeps**.
+
+    Burns in for ``burn`` sweeps (an initial guess; the budget calibration then
+    verifies equilibration independently), then samples the per-spin energy every
+    ``sample_every`` sweeps and returns ``(τ_sweeps, samples)`` with
+    ``τ_sweeps = sample_every · τ_int``.
+    """
+    run = _KERNELS[kernel]
+    lattice = init_lattice(n, magnetisation, rng=rng)
+    run(lattice, T, burn, rng)
+    samples = np.empty(n_samples)
+    for i in range(n_samples):
+        run(lattice, T, sample_every, rng)
+        samples[i] = total_energy(lattice) / lattice.size
+    tau_samples = integrated_autocorrelation_time(samples)
+    return float(tau_samples * sample_every), samples
+
+
 def equilibrium_energy_samples(
     n: int,
     T: float,

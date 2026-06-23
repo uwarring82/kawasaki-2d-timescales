@@ -53,6 +53,28 @@ def test_estimate_equilibrium_energy_temperature_ordering():
     assert lowT.sd >= 0
 
 
+def test_autocorrelation_time_white_noise():
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=20000)
+    tau = eq.integrated_autocorrelation_time(x)
+    assert 0.8 < tau < 1.5            # white noise -> tau ~ 1
+
+
+def test_autocorrelation_time_ar1():
+    """AR(1) with coefficient phi has tau_int = (1+phi)/(1-phi)."""
+    rng = np.random.default_rng(1)
+    phi = 0.8
+    n = 60000
+    x = np.empty(n)
+    x[0] = 0.0
+    noise = rng.normal(size=n)
+    for i in range(1, n):
+        x[i] = phi * x[i - 1] + noise[i]
+    tau = eq.integrated_autocorrelation_time(x)
+    expected = (1 + phi) / (1 - phi)   # = 9
+    assert abs(tau - expected) / expected < 0.25
+
+
 def test_energy_trace_saturates():
     (rng,) = spawn_rngs(5, 1)
     sweeps, e = eq.energy_trace(16, 10.0, 0, rng, kernel="nonlocal", n_sweeps=1500, sample_every=25)

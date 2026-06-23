@@ -74,6 +74,15 @@ def _z_quantile(ci: float) -> float:
 # --------------------------------------------------------------------------- #
 
 
+def _bootstrap_pvalues(boots: np.ndarray) -> np.ndarray:
+    """Two-sided bootstrap p-value per column: 2·min(frac≤0, frac≥0), clipped."""
+    n = boots.shape[0]
+    frac_le = np.mean(boots <= 0, axis=0)
+    frac_ge = np.mean(boots >= 0, axis=0)
+    p = 2.0 * np.minimum(frac_le, frac_ge)
+    return np.clip(p, 1.0 / n, 1.0)
+
+
 @dataclass
 class DifferenceCI:
     times: np.ndarray
@@ -82,6 +91,7 @@ class DifferenceCI:
     ci_high: np.ndarray
     excludes_zero: np.ndarray  # bool per time: CI excludes 0
     sign: np.ndarray           # sign of diff_mean where CI excludes zero, else 0
+    pvalue: np.ndarray | None = None  # two-sided bootstrap p-value per time
 
 
 def difference_bootstrap(
@@ -123,6 +133,7 @@ def difference_bootstrap(
         ci_high=ci_high,
         excludes_zero=excludes_zero,
         sign=sign,
+        pvalue=_bootstrap_pvalues(boots),
     )
 
 
@@ -174,7 +185,8 @@ def offset_corrected_difference_bootstrap(
     sign = np.where(excludes_zero, np.sign(d_point), 0).astype(int)
     return (
         DifferenceCI(times=tt, diff_mean=d_point, ci_low=lo, ci_high=hi,
-                     excludes_zero=excludes_zero, sign=sign),
+                     excludes_zero=excludes_zero, sign=sign,
+                     pvalue=_bootstrap_pvalues(boots)),
         float(R0h), float(R0c),
     )
 

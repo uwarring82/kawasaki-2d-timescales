@@ -1,0 +1,46 @@
+# Milestone 5 — pre-registered crossing search, PRIMARY PAIR.
+# Locked to configs/preregistration_m5.yaml + the M5 protocol amendment
+# (logbook/2026-06-23-milestone5-amendment.md). Primary pair only this run.
+run_id_gate: m5_gate_v1
+run_id_sweep: m5_primary_v1
+run_id_verdict: m5_verdict_v1
+description: >-
+  Crossing search for the designated primary pair (T_i^hot=10 vs T_i^cold=2.4)
+  at T_f=0.6 T_c, N=128. Verdict on the offset-corrected difference
+  (L_hot-R0_hot) - (L_cold-R0_cold); raw difference also reported.
+model:
+  N: 128
+  magnetisation: 0
+primary_pair:
+  T_i_hot: 10.0
+  T_i_cold: 2.4
+  T_f_over_Tc: 0.6
+quench:
+  schedule: {t_max: 15000, n_points: 40}
+preparation:
+  kernel: nonlocal
+gate:                          # N=128 equilibration gate (tau_E measured directly)
+  legs:
+    - {T_i: 10.0, candidates: [250, 500, 1000, 2000], ref_burn: 4000}
+    - {T_i: 2.4,  candidates: [2000, 4000, 8000],      ref_burn: 16000}
+  n_test: 24
+  n_ref: 30
+  mean_sigma: 4.0
+  safety_tau_mult: 30
+einf:
+  kernel: nonlocal
+  sweeps_burn: 16000
+  sample_every: 150
+  n_samples: 40
+ensemble:
+  max_realisations: 48
+  pilot_realisations: 16
+  seed: 50505
+  target_power: 0.8
+  alpha: 0.05
+analysis:
+  lower_cutoff_sweeps: 100      # pre-registration
+  finite_size_fraction: 0.40    # saturation guard: window L_S < this * N
+  n_boot: 5000
+  ci: 0.95
+  fdr_alpha: 0.05

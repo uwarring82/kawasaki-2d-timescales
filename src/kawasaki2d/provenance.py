@@ -66,7 +66,9 @@ class GitState:
     @classmethod
     def capture(cls, cwd: Path | None = None) -> "GitState":
         commit = _run_git(["rev-parse", "HEAD"], cwd)
-        status = _run_git(["status", "--porcelain"], cwd)
+        # Ignore untracked files (e.g. result artefacts being written by this very
+        # run): "dirty" should mean the committed *code* differs from HEAD.
+        status = _run_git(["status", "--porcelain", "--untracked-files=no"], cwd)
         branch = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd)
         dirty = None if status is None else (len(status) > 0)
         return cls(commit=commit, dirty=dirty, branch=branch)

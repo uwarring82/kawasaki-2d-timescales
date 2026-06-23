@@ -83,7 +83,16 @@ card). M4 (initial-temperature sweep) adds an independent-chains equilibration
 gate (all five `T_i` legs validated; the earlier `T_i=2.4` flag was a
 correlated-sampling artifact) and the common-protocol sweep: initial correlation
 length rises sharply toward `T_c`, and the `L_S(t)` curves are strictly ordered
-with no raw crossing — leaving the offset-corrected crossing test to Milestone 5.
+with no raw crossing.
+
+**Milestone 5 (pre-registered crossing search, primary pair `T_i`=10 vs 2.4,
+`T_f`=0.6 `T_c`, N=128) — verdict: _no supported inversion_.** No raw overtaking;
+the offset-corrected difference `(L−R₀)_hot − (L−R₀)_cold` is null for `L_S`
+(equal coarsening rate) and negative for `L_C`/`L_E` (cold stays ahead) — it
+favours the hot leg in no estimator, with BH-FDR control and resolving power
+confirmed (not variance-limited). A clean, controlled deflationary result. The
+small-N spectral probe and full `(T_i,T_f,N)` grid are deferred (see the M5
+logbook + amendment).
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

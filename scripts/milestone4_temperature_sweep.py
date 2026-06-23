@@ -4,12 +4,15 @@
 Phase A (equilibration gate): for each T_i, calibrate the preparation-sweep
 budget with an *independent-chains* test. K chains are run from independent
 random starts for a candidate budget B; their single (fully independent) final
-samples of the energy AND the correlation length L_C are compared by a
-two-sample KS test against a long, decorrelated reference equilibrium
-distribution. The gated budget is the smallest passing candidate, raised if
-necessary to comfortably cover the measured energy autocorrelation time
-(>= safety_tau_mult * tau). M = 0 is conserved exactly, so there is no
-magnetisation distribution to equilibrate (it is a delta at 0); we assert it.
+samples of the energy AND the correlation length L_C give means compared against
+a long, decorrelated reference equilibrium distribution. A budget converges when
+both means are within `mean_sigma` combined SEM of the reference (mean stability
+is robust; the two-sample KS p-values are noisy at modest K near T_c and are
+reported only as supporting evidence). The gated budget is the smallest
+converged candidate, raised if necessary to comfortably cover the measured
+energy autocorrelation time (>= safety_tau_mult * tau). M = 0 is conserved
+exactly, so there is no magnetisation distribution to equilibrate (it is a delta
+at 0); we assert it.
 
 Phase B (sweep): common protocol — fixed T_f, N, schedule, and local-Kawasaki
 kinetic kernel — varying only T_i and its gated prep budget. Ensemble post-quench

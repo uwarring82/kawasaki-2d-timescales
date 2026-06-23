@@ -1,0 +1,129 @@
+{
+  "run_id": "m4_equilibration_v1",
+  "timestamp": "2026-06-23T21:22:47Z",
+  "config": {
+    "run_id_calibration": "m4_equilibration_v1",
+    "run_id_sweep": "m4_sweep_v1",
+    "description": "Ensemble post-quench trajectories for the T_i grid at common T_f, on initial states validated by an independent-chains equilibration gate (energy AND C(r) correlation length). N is fixed; M=0 is conserved exactly. The non-local prep kernel samples the fixed-M canonical equilibrium (detailed balance proven on the 4x4 sector); the gate certifies the per-T_i prep budget converges it.",
+    "model": {
+      "N": 64,
+      "magnetisation": 0
+    },
+    "quench": {
+      "T_f": 1.36,
+      "schedule": {
+        "t_max": 8000,
+        "n_points": 42
+      }
+    },
+    "preparation": {
+      "kernel": "nonlocal"
+    },
+    "T_i_legs": [
+      {
+        "T_i": 2.4,
+        "candidates": [
+          1000,
+          2000,
+          4000,
+          8000
+        ],
+        "ref_burn": 16000
+      },
+      {
+        "T_i": 2.8,
+        "candidates": [
+          1000,
+          2000,
+          4000,
+          8000
+        ],
+        "ref_burn": 16000
+      },
+      {
+        "T_i": 3.5,
+        "candidates": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "ref_burn": 8000
+      },
+      {
+        "T_i": 5.0,
+        "candidates": [
+          250,
+          500,
+          1000,
+          2000
+        ],
+        "ref_burn": 4000
+      },
+      {
+        "T_i": 10.0,
+        "candidates": [
+          250,
+          500,
+          1000,
+          2000
+        ],
+        "ref_burn": 4000
+      }
+    ],
+    "calibration": {
+      "n_test_chains": 40,
+      "n_ref_samples": 50,
+      "ref_spacing_tau_mult": 6,
+      "ks_alpha": 0.05,
+      "mean_sigma": 4.0,
+      "safety_tau_mult": 30
+    },
+    "einf": {
+      "kernel": "nonlocal",
+      "sweeps_burn": 10000,
+      "sample_every": 120,
+      "n_samples": 40
+    },
+    "ensemble": {
+      "n_realisations": 12,
+      "seed": 40404
+    }
+  },
+  "config_hash": "d3fb5c110efaac9a758ef841788dd8ef1cd7db5c002f846ca89ada51592a2494",
+  "seeds": {
+    "base": 40404
+  },
+  "git": {
+    "commit": "39936c1c11a543ffb94cf2acc20eaadaef3f0013",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "0.1.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "budgets": "e7d2d3abddf8622362bafa4bdba7242d96a1aa553f7258bf5559a9e4855ae9b4",
+    "equilibration_gate": "66c1a695696e055b796eca0ee69b6ec5c0d9cedfc42000855f6ebbce1ece21ae"
+  },
+  "schema_version": "1.0",
+  "notes": "M4 Phase A: independent-chains equilibration gate"
+}

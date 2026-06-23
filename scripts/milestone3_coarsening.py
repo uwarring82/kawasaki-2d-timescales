@@ -239,42 +239,47 @@ def build_summary(results, run_dir, manifest):
     io.write_trajectory_csv(run_dir / "summary_table.csv", rows, columns=cols)
     manifest.add_output("summary_table", run_dir / "summary_table.csv")
 
-    fig, ax = plt.subplots(1, 3, figsize=(14, 4.2))
-    a = ax[0]
+    fig, ax = plt.subplots(2, 2, figsize=(11, 8.5))
+    a = ax[0, 0]
     for est, mk in (("L_C", "o"), ("L_S", "s"), ("L_E", "^")):
-        al = [r["fits"][est]["preferred_alpha"] if r["fits"].get(est) else np.nan for r in results]
-        lo = [r["fits"][est]["alpha_lo"] if r["fits"].get(est) else np.nan for r in results]
-        hi = [r["fits"][est]["alpha_hi"] if r["fits"].get(est) else np.nan for r in results]
-        al = np.array(al); lo = np.array(lo); hi = np.array(hi)
+        al = np.array([r["fits"][est]["preferred_alpha"] if r["fits"].get(est) else np.nan for r in results])
+        lo = np.array([r["fits"][est]["alpha_lo"] if r["fits"].get(est) else np.nan for r in results])
+        hi = np.array([r["fits"][est]["alpha_hi"] if r["fits"].get(est) else np.nan for r in results])
         a.errorbar(Ns, al, yerr=[al - lo, hi - al], fmt=mk + "-", capsize=3, label=est)
     a.axhline(1 / 3, color="r", ls="--", lw=1, label="1/3")
     a.set_xscale("log", base=2); a.set_xticks(Ns); a.set_xticklabels(Ns)
-    a.set_xlabel("N"); a.set_ylabel("preferred exponent"); a.set_title("exponent vs N"); a.legend(fontsize=8)
+    a.set_xlabel("N"); a.set_ylabel("preferred exponent")
+    a.set_title("free exponent vs N (illustrative; band = linearity tolerance)"); a.legend(fontsize=8)
 
-    b = ax[1]
+    b = ax[0, 1]
     for est, mk in (("L_C", "o"), ("L_S", "s"), ("L_E", "^")):
         R0 = [r["fits"][est]["R0"] if r["fits"].get(est) else np.nan for r in results]
         b.plot(Ns, R0, mk + "-", label=f"{est} $R_0$")
     b.set_xscale("log", base=2); b.set_xticks(Ns); b.set_xticklabels(Ns)
-    b.set_xlabel("N"); b.set_ylabel("offset $R_0$"); b.set_title("offset vs N"); b.legend(fontsize=8)
+    b.set_xlabel("N"); b.set_ylabel("offset $R_0$"); b.set_title("offset $R_0$ vs N"); b.legend(fontsize=8)
 
-    # finite-size scaling collapse: L_S/N vs t/N^3 (only shown; "if data warrants")
-    c = ax[2]
-    for r in results:
-        N = r["N"]
-        d = io.read_trajectory_csv(run_dir.parent / f"m3_N{N:03d}_v1" / "ensemble_trajectory.csv")
-        sw = d["sweep"]; ls = d["L_S_mean"]
-        pos = sw > 0
-        c.plot(sw[pos] / N**3, ls[pos] / N, "-o", ms=3, label=f"N={N}")
-    c.set_xscale("log"); c.set_yscale("log")
-    c.set_xlabel(r"$t/N^3$"); c.set_ylabel(r"$L_S/N$"); c.set_title("FSS collapse ($L\\sim t^{1/3}$)"); c.legend(fontsize=8)
+    # Naive FSS collapse L_S/N vs t/N^3 — does NOT collapse: the offset R0/N is
+    # not scaled out (separation ~ R0/N). Shown to make the point explicit.
+    R0_S = {r["N"]: (r["fits"]["L_S"]["R0"] if r["fits"].get("L_S") else 0.0) for r in results}
+    for title, corrected, c in (("naive collapse: $L_S/N$ vs $t/N^3$", False, ax[1, 0]),
+                                ("offset-corrected: $(L_S-R_0)/N$ vs $t/N^3$", True, ax[1, 1])):
+        for r in results:
+            N = r["N"]
+            d = io.read_trajectory_csv(run_dir.parent / f"m3_N{N:03d}_v1" / "ensemble_trajectory.csv")
+            sw, ls = d["sweep"], d["L_S_mean"]
+            pos = sw > 0
+            y = (ls[pos] - (R0_S[N] if corrected else 0.0)) / N
+            c.plot(sw[pos] / N**3, y, "-o", ms=3, label=f"N={N}")
+        c.set_xscale("log"); c.set_yscale("log")
+        c.set_xlabel(r"$t/N^3$"); c.set_ylabel(r"$(L_S-R_0)/N$" if corrected else r"$L_S/N$")
+        c.set_title(title); c.legend(fontsize=8)
 
     fig.suptitle("Milestone 3 — coarsening-law assessment across N")
     fig.tight_layout(); fig.savefig(run_dir / "m3_summary.png", dpi=130); plt.close(fig)
     manifest.add_output("m3_summary_fig", run_dir / "m3_summary.png")
 
 
-def main(config_path: str) -> None:
+def main(config_path: str, summary_only: bool = False) -> None:
     cfg = io.load_config(config_path)
     an = cfg["analysis"]
     eg = an["exponent_grid"]
@@ -284,19 +289,25 @@ def main(config_path: str) -> None:
     print(f"Milestone 3: N={Ns}, T_f={cfg['quench']['T_f']} (T_f/T_c="
           f"{float(cfg['quench']['T_f'])/T_C:.2f}), {cfg['ensemble']['n_realisations']} realisations")
     results = []
-    for N in sorted(Ns):  # increasing order, per the M3 finite-size protocol
-        print(f"\n=== N = {N} ===")
-        run_id = f"m3_N{N:03d}_v1"
-        run_dir = io.new_run_directory(REPO_ROOT / "results", run_id)
-        io.dump_config(cfg, run_dir / "config.yaml")
-        manifest = provenance.Manifest.build(
-            run_id=run_id, timestamp=_utc(), config=cfg,
-            seeds={"base": int(cfg["ensemble"]["seed"]), "N": N},
-            repo_root=REPO_ROOT, notes=f"Milestone 3 coarsening, N={N}",
-        )
-        summary = run_one_size(N, cfg, run_dir, manifest, alpha_grid)
-        manifest.write(run_dir / "manifest.json")
-        results.append(summary)
+    if summary_only:
+        # Rebuild the cross-N summary from saved per-N analysis.json (no re-sim).
+        for N in sorted(Ns):
+            results.append(json.loads(
+                (REPO_ROOT / "results" / f"m3_N{N:03d}_v1" / "analysis.json").read_text()))
+    else:
+        for N in sorted(Ns):  # increasing order, per the M3 finite-size protocol
+            print(f"\n=== N = {N} ===")
+            run_id = f"m3_N{N:03d}_v1"
+            run_dir = io.new_run_directory(REPO_ROOT / "results", run_id)
+            io.dump_config(cfg, run_dir / "config.yaml")
+            manifest = provenance.Manifest.build(
+                run_id=run_id, timestamp=_utc(), config=cfg,
+                seeds={"base": int(cfg["ensemble"]["seed"]), "N": N},
+                repo_root=REPO_ROOT, notes=f"Milestone 3 coarsening, N={N}",
+            )
+            summary = run_one_size(N, cfg, run_dir, manifest, alpha_grid)
+            manifest.write(run_dir / "manifest.json")
+            results.append(summary)
 
     # --- summary ---
     print("\n=== summary ===")
@@ -326,5 +337,7 @@ def main(config_path: str) -> None:
 
 
 if __name__ == "__main__":
-    cfg_path = sys.argv[1] if len(sys.argv) > 1 else str(REPO_ROOT / "configs" / "coarsening_m3.yaml")
-    main(cfg_path)
+    argv = [a for a in sys.argv[1:] if a != "--summary-only"]
+    summary_only = "--summary-only" in sys.argv
+    cfg_path = argv[0] if argv else str(REPO_ROOT / "configs" / "coarsening_m3.yaml")
+    main(cfg_path, summary_only=summary_only)

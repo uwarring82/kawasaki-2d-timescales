@@ -71,7 +71,14 @@ The task card defines gates that **must pass before any physics claim**. Current
 - [x] Correct Metropolis acceptance / fixed-`T` equilibrium behaviour (test)
 - [x] Ergodicity + detailed balance of the exchange proposal on a small lattice (test)
 - [x] Bitwise reproducibility under fixed seeds (test)
-- [ ] Ensemble averaging + finite-size comparison across `N = 32, 64, 128` (Milestones 2–5)
+- [x] Ensemble averaging over independent realisations (Milestone 2; finite-size `N=32/64/128` comparison in Milestone 3)
+
+**Milestones:** M1 (static phase separation) and M2 (single-quench benchmark)
+are complete — see `results/` and `logbook/`. M2 confirms diffusive coarsening:
+`L = R₀ + (λt)^{1/3}` fits both `L_C` and `L_S` to R² > 0.996, with the
+offset-corrected exponent recovering 1/3. The equilibration diagnostic also
+flags (as designed) that the near-`T_c` `T_i=2.4` leg needs more preparation
+sweeps before Milestone 4.
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

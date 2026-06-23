@@ -1,0 +1,83 @@
+{
+  "run_id": "m2_single_quench_v1",
+  "timestamp": "2026-06-23T20:39:45Z",
+  "config": {
+    "run_id": "m2_single_quench_v1",
+    "description": "Single quench from an equilibrated high-T state to T_f < T_c, tracking the coarsening trajectory (energy, length scales, structure factor).",
+    "model": {
+      "N": 64,
+      "magnetisation": 0
+    },
+    "preparation": {
+      "T_i": 10.0,
+      "kernel": "nonlocal",
+      "n_sweeps": 3000
+    },
+    "quench": {
+      "T_f": 1.36,
+      "schedule": {
+        "t_max": 5000,
+        "n_points": 40
+      }
+    },
+    "ensemble": {
+      "n_realisations": 8,
+      "seed": 11
+    },
+    "observables": {
+      "with_clusters": true
+    }
+  },
+  "config_hash": "710df4dce4737dfc7c0a2b76e85de2e01a8b87ee674dd5f3d4c9d8fb81e3296b",
+  "seeds": {
+    "base": 11,
+    "n_realisations": 8
+  },
+  "git": {
+    "commit": "7cc29a932d1a355549e60ab07f6ba347fb03c713",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "0.1.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "equilibration_T_i": "899a1338d211b3ff184a39a529a5786bb9adfd9bed64e804baab2df5eba6be0a",
+    "equilibration_near_Tc": "8221d8d94a05cbdf01a38ef214fbc11ee135c8c1d68de8fd295dbd0528874d32",
+    "pilot_seed_sweep": "5533c2f520f9056fd66514abb7560f6acaead6f42e3dcc5d8202763190614495",
+    "trajectory_real000": "d657ac546bcfd009a7cd74ec9a8f0d82b38bd468a7638a13d9b4a6789f42fa80",
+    "trajectory_real001": "502ae08c9a9f26f7d84ed4090deea293beb0cbe4d59863aa8e4f21c64b44ff7d",
+    "trajectory_real002": "df2113d3098ed460d41b897ce9679706a7010c0d11f479d6cc82f69135fbf8e7",
+    "trajectory_real003": "4989a8303636e1c8bad5070d04ad79113669cefaf847762dfac81f8519adda72",
+    "trajectory_real004": "89511f392235a7db40957ba2bec22dd465e2e5ec167a3074efbd500729f89f97",
+    "trajectory_real005": "a2cef4857eeeaded9a18d717f6e42d06845f4057755c93cf497578ad67930bbf",
+    "trajectory_real006": "db83151ec8ec4f1224a49de75d22aec6b4d6e0825cf43a62a8a9a2268a4d450b",
+    "trajectory_real007": "4c733dd16eeaee26ec1bac188b644272e30c40401e3e183846a51e706d85adb1",
+    "ensemble_trajectory": "3fa3adc153498873e9c274e20167a3faa38767581f9d9f68673162d1f09de143",
+    "Skt_k": "b57f068221c6fc2ea09aec9638b0ac79f2c44bf865e8d61ddb7306b8fd9f1f7d",
+    "Skt_mean": "f110927d2a6db47852351289304ebe9d76d1152990515c8be0efbb2b2e455ec1",
+    "Skt_sweeps": "f499993e5cd0f46a3ee931866b6227ab3f91290494938c47116f3d28667aada3",
+    "ensemble_benchmark": "694e5845cb75953f92a766ae4b2124f40f23237c28551836c424eb873083e7e3",
+    "m2_report": "e66a14be21916b97752c7c640208bfc0b576e91f449899df85ceed6394598d45"
+  },
+  "schema_version": "1.0",
+  "notes": "Milestone 2: single-quench benchmark (3 phases)"
+}

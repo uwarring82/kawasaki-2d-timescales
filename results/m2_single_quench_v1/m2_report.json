@@ -1,0 +1,89 @@
+{
+  "config": {
+    "run_id": "m2_single_quench_v1",
+    "description": "Single quench from an equilibrated high-T state to T_f < T_c, tracking the coarsening trajectory (energy, length scales, structure factor).",
+    "model": {
+      "N": 64,
+      "magnetisation": 0
+    },
+    "preparation": {
+      "T_i": 10.0,
+      "kernel": "nonlocal",
+      "n_sweeps": 3000
+    },
+    "quench": {
+      "T_f": 1.36,
+      "schedule": {
+        "t_max": 5000,
+        "n_points": 40
+      }
+    },
+    "ensemble": {
+      "n_realisations": 8,
+      "seed": 11
+    },
+    "observables": {
+      "with_clusters": true
+    }
+  },
+  "phase1_equilibration": {
+    "T_i": {
+      "T": 10.0,
+      "T_over_Tc": 4.406867935097715,
+      "two_runs_indistinguishable": true,
+      "two_runs_overlap": 0.8999999999999999,
+      "two_runs_ks_p": 0.8943205382966369,
+      "prep_vs_local_indistinguishable": true,
+      "prep_vs_local_overlap": 0.8200000000000001,
+      "prep_vs_local_ks_p": 0.6279165272026672,
+      "equilibrium_energy_per_spin": -0.20936239919354838
+    },
+    "near_Tc": {
+      "T": 2.4,
+      "T_over_Tc": 1.0576483044234515,
+      "two_runs_indistinguishable": false,
+      "two_runs_overlap": 0.8466666666666667,
+      "two_runs_ks_p": 0.003220729236713058,
+      "prep_vs_local_indistinguishable": false,
+      "prep_vs_local_overlap": 0.1,
+      "prep_vs_local_ks_p": 8.600928185744819e-66,
+      "equilibrium_energy_per_spin": -1.1984311995967742
+    },
+    "passed": false
+  },
+  "phase2_pilot": {
+    "final_L_S": [
+      14.094436191643638,
+      13.452298376741858,
+      12.776056793136831
+    ],
+    "rel_spread": 0.04004828087288749,
+    "outliers": 0,
+    "stable": true
+  },
+  "phase3_ensemble": {
+    "n_realisations": 8,
+    "e_inf_estimate": -1.8834228515625,
+    "e_inf_sd": 0.008160588200649905,
+    "final_L_C_mean": 2.730532093571128,
+    "final_L_S_mean": 13.10563535335602,
+    "raw_effective_exponent_L_S_median": 0.14808636845775247,
+    "offset_fits": {
+      "L_C": {
+        "R0": 0.7320707973913757,
+        "R0_err": 0.018486225429252347,
+        "lambda": 0.0014981531107014622,
+        "r_squared": 0.99625756633406,
+        "offset_corrected_exponent_median": 0.3318381805775769
+      },
+      "L_S": {
+        "R0": 4.6398070359541155,
+        "R0_err": 0.04714600009254473,
+        "lambda": 0.11817249838910267,
+        "r_squared": 0.9986733419182792,
+        "offset_corrected_exponent_median": 0.3308311166551927
+      }
+    },
+    "lower_cutoff_sweeps": 100
+  }
+}

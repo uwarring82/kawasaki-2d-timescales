@@ -1,0 +1,20 @@
+description: Single quench from an equilibrated high-T state to T_f < T_c, tracking
+  the coarsening trajectory (energy, length scales, structure factor).
+ensemble:
+  n_realisations: 8
+  seed: 11
+model:
+  N: 64
+  magnetisation: 0
+observables:
+  with_clusters: true
+preparation:
+  T_i: 10.0
+  kernel: nonlocal
+  n_sweeps: 3000
+quench:
+  T_f: 1.36
+  schedule:
+    n_points: 40
+    t_max: 5000
+run_id: m2_single_quench_v1

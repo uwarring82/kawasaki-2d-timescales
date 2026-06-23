@@ -1,0 +1,22 @@
+# Milestone 2 — single-quench benchmark: random M=0 → T_f, tracking E(t), L(t), S(k,t).
+run_id: m2_single_quench_v1
+description: >-
+  Single quench from an equilibrated high-T state to T_f < T_c, tracking the
+  coarsening trajectory (energy, length scales, structure factor).
+model:
+  N: 64
+  magnetisation: 0
+preparation:
+  T_i: 10.0             # near-infinite-temperature disordered start
+  kernel: nonlocal
+  n_sweeps: 3000
+quench:
+  T_f: 1.36             # ≈ 0.6 T_c (default working point)
+  schedule:
+    t_max: 5000         # sweeps after the quench
+    n_points: 40        # log-spaced checkpoints
+ensemble:
+  n_realisations: 8
+  seed: 11
+observables:
+  with_clusters: true

@@ -1,0 +1,90 @@
+# =====================================================================
+# PRE-REGISTERED ANALYSIS PLAN — Milestone 5 (boundary / crossing search)
+# =====================================================================
+# Integrity gate: this plan is committed to version control BEFORE the
+# crossing is examined. Fitting windows, estimator definitions, verdict
+# thresholds, the declared (T_i, T_f, N) grid, and the primary pair are
+# fixed here. Deviations after this point are recorded in the logbook and
+# labelled exploratory.
+#
+# Status: PRE-REGISTRATION (no Milestone-5 production runs executed yet).
+# Frozen at: 2026-06-23 (software v0.1.0). See logbook/ for the entry.
+# =====================================================================
+
+prereg_version: 1
+frozen_date: "2026-06-23"
+
+# ---- Declared grid -------------------------------------------------
+grid:
+  N: [32, 64, 128]              # production coarsening sizes
+  N_spectral: [4]               # exact-diagonalisation spectral tier (consistency probe only)
+  magnetisation: 0
+  T_i: [2.4, 2.8, 3.5, 5.0, 10.0]   # initial (pre-quench) temperatures, all > T_c
+  T_f_over_Tc: [0.5, 0.6, 0.75]     # quench targets
+  T_f_default_over_Tc: 0.6
+
+# ---- Directional hypothesis (tested, not assumed) ------------------
+hypothesis:
+  statement: >-
+    At M=0 the hottest preparation (T_i=10) starts with the smallest initial
+    correlation length; the coldest above-T_c preparation (T_i=2.4) starts with
+    the largest near-critical xi. An inversion requires the HOTTER preparation
+    to overtake the colder one in domain length at late times. We test this
+    directional claim explicitly rather than fishing for any crossing.
+  direction: "L_hot - L_cold transitions from negative (early) to positive (late)"
+
+# ---- Primary pair (designated before production) -------------------
+primary_pair:
+  T_i_hot: 10.0
+  T_i_cold: 2.4
+  T_f_over_Tc: 0.6
+  N: 128
+
+# ---- Length estimators (definitions frozen) ------------------------
+estimators:
+  L_C:
+    method: "first crossing of radially-averaged C(r) below threshold * C(0)"
+    threshold: 0.36787944117    # 1/e
+  L_S:
+    method: "2*pi / <k>, <k> = first moment of radially-averaged S(k), k>0"
+  L_E:
+    method: "1 / (e(t) - e_inf); e_inf estimated independently per (N, T_f, M)"
+    note: "late-stage interfacial relation, not a general identity"
+  agreement_rule: "two-of-three estimators consistent in ordering and late-time scaling"
+
+# ---- Fitting / growth law ------------------------------------------
+growth_fit:
+  model: "R(t) = R0 + (lambda * t)^(1/3)"
+  lower_cutoff_sweeps: 100      # exclude the early transient below this
+  upper_cutoff_rule: "stop at 0.5 * equilibrium domain scale (finite-size guard)"
+  offset_control: "subtract independently fitted R0(T_i) before collapse"
+
+# ---- Time normalisation --------------------------------------------
+time:
+  unit: "sweep = N^2 attempted nearest-neighbour bond updates (independent of acceptance)"
+  accepted_move_clock: "diagnostic only; illegitimate for cross-preparation comparison"
+
+# ---- Statistics ----------------------------------------------------
+statistics:
+  bootstrap:
+    quantity: "L_hot(t) - L_cold(t)"
+    n_boot: 5000
+    ci: 0.95
+    crossing_rule: "report crossing only if CI excludes zero with opposite sign on BOTH sides"
+  fdr:
+    method: "benjamini-hochberg"
+    alpha: 0.05
+    applied_over: "declared (T_i, T_f, N) grid of per-pair crossing tests"
+  seed_budget:
+    target_power: 0.8
+    alpha: 0.05
+    pilot: "estimate per-realisation variance of L at the target time, then size n"
+    expected_order: "O(1e2 - 1e3) realisations per preparation"
+    variance_limited_verdict: "underdetermined (NOT 'no effect')"
+
+# ---- Four-outcome verdict scheme -----------------------------------
+verdicts:
+  - spectral_mpemba          # only awardable at the N=4 spectral tier
+  - coarsening_route_inversion
+  - no_supported_inversion
+  - underdetermined

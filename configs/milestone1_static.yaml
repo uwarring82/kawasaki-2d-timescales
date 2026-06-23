@@ -1,0 +1,22 @@
+# Milestone 1 — static phase separation: snapshots + observables above/below T_c.
+# Equilibrium configurations at a range of temperatures, M = 0.
+run_id: m1_static_v1
+description: >-
+  Static phase-separation demonstrator. Equilibrate M=0 lattices at several
+  temperatures spanning T_c and record snapshots + equilibrium observables.
+model:
+  N: 64
+  magnetisation: 0      # M = 0 conserved sector
+preparation:
+  kernel: nonlocal      # faster equilibration sampler (same fixed-M equilibrium)
+  n_sweeps: 4000
+temperatures:           # in units where J = k_B = 1; T_c ≈ 2.269
+  - 1.2
+  - 1.8
+  - 2.269
+  - 2.8
+  - 4.0
+ensemble:
+  seed: 20260623
+observables:
+  with_clusters: true

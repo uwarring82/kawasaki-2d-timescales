@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "kawasaki2d: 2D Kawasaki-Ising coarsening and the operational boundary of the Mpemba effect"
+abstract: >-
+  A small, reproducible 2D Kawasaki-Ising demonstrator of conserved-order-parameter
+  phase separation, used to study quench-dependent relaxation and coarsening
+  timescales and to map the operational boundary between finite-system,
+  mode-resolved anomalous relaxation and thermodynamic-limit coarsening.
+type: software
+version: 0.1.0
+date-released: "2026-06-23"
+license: MIT
+keywords:
+  - Ising model
+  - Kawasaki dynamics
+  - conserved order parameter
+  - phase separation
+  - coarsening
+  - Mpemba effect
+  - Monte Carlo
+  - nonequilibrium relaxation
+authors:
+  - name: "Kawasaki-2D contributors"
+references:
+  - type: article
+    title: "Speedups in nonequilibrium thermal relaxation: Mpemba and related effects"
+    year: 2025
+    notes: "arXiv:2502.01758 — primary overview."
+  - type: article
+    authors:
+      - family-names: Lu
+        given-names: Zhiyue
+      - family-names: Raz
+        given-names: Oren
+    title: "Nonequilibrium thermodynamics of the Markovian Mpemba effect and its inverse"
+    journal: "Proceedings of the National Academy of Sciences"
+    year: 2017
+  - type: article
+    authors:
+      - family-names: Pemartín
+      - family-names: Mompó
+      - family-names: Lasanta
+      - family-names: Martín-Mayor
+      - family-names: Salas
+    title: "Slow growth of magnetic domains helps fast evolution routes for out-of-equilibrium dynamics"
+    journal: "Physical Review E"
+    volume: 104
+    year: 2021
+    notes: "104, 044114 — closest prior art (non-conserved Glauber)."

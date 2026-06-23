@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+
+# Large numerical artefacts are tracked deliberately, not by default.
+# Run outputs land under results/<run_id>/ and are committed when a run is
+# declared (append-only); transient/scratch artefacts are ignored here.
+results/**/*.tmp
+results/scratch/
+*.log
+
+# Figures regenerated from data are not ignored (FAIR: figures are CC-BY data);
+# but local scratch plots are:
+notebooks/scratch/
+
+# tracked egg-info / build metadata from editable install
+src/*.egg-info/

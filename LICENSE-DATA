@@ -1,0 +1,11 @@
+Data and figures licence
+=========================
+
+All numerical data artefacts (under `results/`), generated figures, and the
+contents of the logbook are released under the Creative Commons Attribution 4.0
+International licence (CC-BY-4.0): https://creativecommons.org/licenses/by/4.0/
+
+The source code is released separately under the MIT licence (see LICENSE).
+
+This split (OSI-approved licence for code, CC-BY for data and figures) follows
+the FAIR-Reusability requirement in the project task card.

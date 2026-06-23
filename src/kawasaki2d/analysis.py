@@ -24,7 +24,6 @@ from dataclasses import dataclass
 import numpy as np
 
 try:
-    from scipy.optimize import curve_fit
     from scipy.stats import norm as _norm
 
     _HAVE_SCIPY = True
@@ -169,7 +168,7 @@ def crossing_test(dci: DifferenceCI) -> CrossingVerdict:
 
 def growth_model(t: np.ndarray, R0: float, lam: float) -> np.ndarray:
     """``R(t) = R0 + (λ t)^{1/3}`` (diffusive conserved-dynamics coarsening)."""
-    return R0 + np.cbrt(np.clip(lam, 0, None) * np.asarray(t, float))
+    return R0 + np.cbrt(lam * np.asarray(t, float))
 
 
 @dataclass
@@ -178,26 +177,44 @@ class OffsetFit:
     lam: float
     R0_err: float
     lam_err: float
+    r_squared: float
 
 
-def fit_offset_growth(t: np.ndarray, L: np.ndarray, *, p0: tuple[float, float] | None = None) -> OffsetFit:
-    """Fit ``L(t) ≈ R0 + (λ t)^{1/3}`` by nonlinear least squares.
+def fit_offset_growth(t: np.ndarray, L: np.ndarray) -> OffsetFit:
+    """Fit ``L(t) ≈ R0 + (λ t)^{1/3}`` with the exponent **fixed at 1/3**.
 
-    Used to test whether the offset ``R0`` is itself preparation-dependent: a
-    crossing that disappears after subtracting an independently fitted ``R0(T_i)``
-    is a route/offset artefact, not an asymptotic inversion.
+    The pre-registration (``configs/preregistration_m5.yaml``) fixes the growth
+    exponent at 1/3, so the model is *linear* in the variable ``u = t^{1/3}``:
+    ``L = R0 + b·u`` with ``λ = b³``. A linear least-squares fit is robust and
+    non-degenerate — unlike a free nonlinear fit of ``R0`` and ``λ`` over a short,
+    offset-dominated window, which is ill-conditioned (the two parameters trade
+    off). Used to test whether the offset ``R0`` is preparation-dependent: a
+    crossing that disappears after subtracting an independently fitted
+    ``R0(T_i)`` is a route/offset artefact, not an asymptotic inversion.
     """
-    if not _HAVE_SCIPY:
-        raise RuntimeError("fit_offset_growth requires scipy")
     t = np.asarray(t, float)
     L = np.asarray(L, float)
     mask = np.isfinite(t) & np.isfinite(L) & (t > 0)
     t, L = t[mask], L[mask]
-    if p0 is None:
-        p0 = (float(L[0]) if L.size else 0.0, 1.0)
-    popt, pcov = curve_fit(growth_model, t, L, p0=p0, maxfev=20000)
-    perr = np.sqrt(np.diag(pcov))
-    return OffsetFit(R0=float(popt[0]), lam=float(popt[1]), R0_err=float(perr[0]), lam_err=float(perr[1]))
+    if t.size < 3:
+        raise ValueError("need at least 3 finite points with t>0 to fit")
+    u = np.cbrt(t)
+    A = np.vstack([np.ones_like(u), u]).T
+    coef, residuals, *_ = np.linalg.lstsq(A, L, rcond=None)
+    R0, b = float(coef[0]), float(coef[1])
+    pred = A @ coef
+    ss_res = float(np.sum((L - pred) ** 2))
+    ss_tot = float(np.sum((L - L.mean()) ** 2))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan")
+    # parameter standard errors from the linear-model covariance
+    dof = max(1, len(L) - 2)
+    sigma2 = ss_res / dof
+    cov = sigma2 * np.linalg.inv(A.T @ A)
+    R0_err = float(np.sqrt(cov[0, 0]))
+    b_err = float(np.sqrt(cov[1, 1]))
+    lam = b**3 if b > 0 else float("nan")
+    lam_err = abs(3 * b**2 * b_err) if b > 0 else float("nan")
+    return OffsetFit(R0=R0, lam=lam, R0_err=R0_err, lam_err=lam_err, r_squared=r2)
 
 
 def offset_corrected(L: np.ndarray, R0: float) -> np.ndarray:

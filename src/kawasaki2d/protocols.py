@@ -107,29 +107,41 @@ def log_schedule(t_max: int, n_points: int, t_min: int = 1) -> np.ndarray:
     return np.unique(np.concatenate(([0], pts)))
 
 
-def track_quench(
+@dataclass
+class CoarseningTrajectory:
+    """A single quench trajectory: scalar rows plus optional ``S(k, t)`` curves."""
+
+    sweeps: np.ndarray            # (T,) checkpoint sweeps
+    rows: list[dict]              # per-checkpoint scalar observables (TRAJECTORY_COLUMNS)
+    sk_k: np.ndarray              # (K,) radial wavevectors (same for all t), or empty
+    sk: np.ndarray                # (T, K) structure factor S(k, t), or empty
+
+
+def coarsening_trajectory(
     lattice: np.ndarray,
     T_f: float,
     schedule: np.ndarray,
     rng: np.random.Generator,
     *,
     with_clusters: bool = True,
-) -> list[dict]:
+    record_sk: bool = False,
+) -> CoarseningTrajectory:
     """Quench ``lattice`` to ``T_f`` and record observables on ``schedule``.
 
-    ``lattice`` is the (already equilibrated) initial state; it is evolved in
-    place by the local Kawasaki kinetic kernel. ``schedule`` is a sorted array of
-    sweep checkpoints (include 0 to record the pre-quench state). Returns a list
-    of row dicts keyed by :data:`kawasaki2d.io.TRAJECTORY_COLUMNS`.
+    ``lattice`` (already equilibrated) is evolved in place by the local Kawasaki
+    kinetic kernel. ``schedule`` is a sorted array of sweep checkpoints (include
+    0 to record the pre-quench state). When ``record_sk`` is set, the radially
+    averaged structure factor ``S(k, t)`` is captured at every checkpoint.
 
-    Acceptance rate is reported per interval (accepted swaps / attempted updates
-    since the previous checkpoint); it is a diagnostic only and never used as a
-    clock for cross-preparation comparison.
+    Acceptance rate is reported per interval (diagnostic only; never a clock for
+    cross-preparation comparison).
     """
     schedule = np.unique(np.asarray(schedule, dtype=np.int64))
     rows: list[dict] = []
+    sk_rows: list[np.ndarray] = []
+    sk_k = np.zeros(0)
     prev = 0
-    for idx, t in enumerate(schedule):
+    for t in schedule:
         if t > prev:
             stats = dynamics.run_kawasaki(lattice, T_f, int(t - prev), rng)
             acc = stats.acceptance_rate
@@ -151,4 +163,30 @@ def track_quench(
                 "acceptance_rate": acc,
             }
         )
-    return rows
+        if record_sk:
+            k, sk = observables.structure_factor(lattice)
+            sk_k = k
+            sk_rows.append(sk)
+    return CoarseningTrajectory(
+        sweeps=schedule,
+        rows=rows,
+        sk_k=sk_k,
+        sk=np.asarray(sk_rows) if sk_rows else np.zeros((0, 0)),
+    )
+
+
+def track_quench(
+    lattice: np.ndarray,
+    T_f: float,
+    schedule: np.ndarray,
+    rng: np.random.Generator,
+    *,
+    with_clusters: bool = True,
+) -> list[dict]:
+    """Scalar-only quench trajectory (rows keyed by ``io.TRAJECTORY_COLUMNS``).
+
+    Thin wrapper over :func:`coarsening_trajectory` kept for the CLI and tests.
+    """
+    return coarsening_trajectory(
+        lattice, T_f, schedule, rng, with_clusters=with_clusters, record_sk=False
+    ).rows

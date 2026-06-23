@@ -64,3 +64,18 @@ def test_log_schedule_is_sorted_unique():
     sched = protocols.log_schedule(1000, 20)
     assert np.all(np.diff(sched) > 0)
     assert sched[0] == 0
+
+
+def test_coarsening_trajectory_captures_sk():
+    rng = make_rng(9)
+    n = 32
+    prep = protocols.prepare_initial_state(n, 10.0, 0, rng, kernel="nonlocal", n_sweeps=100)
+    sched = protocols.log_schedule(t_max=400, n_points=6)
+    traj = protocols.coarsening_trajectory(prep.lattice, 1.36, sched, rng, record_sk=True)
+    assert traj.sk.shape == (len(sched), n // 2 + 1)
+    assert traj.sk_k.shape == (n // 2 + 1,)
+    assert len(traj.rows) == len(sched)
+    # the structure-factor peak moves to smaller k as domains grow
+    k_peak_early = traj.sk_k[np.nanargmax(traj.sk[1])]
+    k_peak_late = traj.sk_k[np.nanargmax(traj.sk[-1])]
+    assert k_peak_late <= k_peak_early

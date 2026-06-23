@@ -1,0 +1,96 @@
+{
+  "N": 64,
+  "T_f": 1.36,
+  "T_f_over_Tc": 0.5993340391732893,
+  "e_inf_mean": -1.8817138671875,
+  "e_inf_sd": 0.00790332911349131,
+  "e_inf_horizon_sweeps": 10000,
+  "window_upper": 9000.0,
+  "saturated_within_tmax": false,
+  "L_S_max_over_N": 0.23894488348394413,
+  "fits": {
+    "L_C": {
+      "R0": 0.6518339559775855,
+      "R0_err": 0.022187686784250295,
+      "lambda": 0.0018787646293043224,
+      "fit_r2": 0.995723572835428,
+      "preferred_alpha": 0.45,
+      "alpha_lo": 0.41000000000000003,
+      "alpha_hi": 0.49,
+      "scan_r2": 0.9997438227299935,
+      "offset_corrected_exponent_median": 0.310881650142522,
+      "n_points": 21,
+      "window": [
+        100.0,
+        9000.0
+      ],
+      "consistent_with_one_third": true,
+      "band_includes_one_third": false
+    },
+    "L_S": {
+      "R0": 4.447979179767725,
+      "R0_err": 0.044963346107107165,
+      "lambda": 0.13890484543569875,
+      "fit_r2": 0.9989997600687764,
+      "preferred_alpha": 0.38,
+      "alpha_lo": 0.345,
+      "alpha_hi": 0.42000000000000004,
+      "scan_r2": 0.9997422809421568,
+      "offset_corrected_exponent_median": 0.3181997895903459,
+      "n_points": 21,
+      "window": [
+        100.0,
+        9000.0
+      ],
+      "consistent_with_one_third": true,
+      "band_includes_one_third": true
+    },
+    "L_E": {
+      "R0": 0.6546620220008208,
+      "R0_err": 0.019185829326535803,
+      "lambda": 0.0021295643396786624,
+      "fit_r2": 0.9970547682120908,
+      "preferred_alpha": 0.42500000000000004,
+      "alpha_lo": 0.385,
+      "alpha_hi": 0.46,
+      "scan_r2": 0.9994826427673812,
+      "offset_corrected_exponent_median": 0.31605390065113254,
+      "n_points": 21,
+      "window": [
+        100.0,
+        9000.0
+      ],
+      "consistent_with_one_third": true,
+      "band_includes_one_third": false
+    }
+  },
+  "cutoff_scan": {
+    "50": {
+      "preferred_alpha": 0.38,
+      "fit_r2": 0.9988638313181221
+    },
+    "100": {
+      "preferred_alpha": 0.38,
+      "fit_r2": 0.9989997600687764
+    },
+    "200": {
+      "preferred_alpha": 0.38,
+      "fit_r2": 0.9991974589790985
+    },
+    "400": {
+      "preferred_alpha": 0.38,
+      "fit_r2": 0.99919288175672
+    },
+    "800": {
+      "preferred_alpha": 0.4,
+      "fit_r2": 0.9988786821387721
+    }
+  },
+  "cutoff_stable": true,
+  "estimators_consistent_with_one_third": [
+    "L_C",
+    "L_S",
+    "L_E"
+  ],
+  "two_of_three_agreement": true
+}

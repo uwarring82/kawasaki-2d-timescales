@@ -73,12 +73,14 @@ The task card defines gates that **must pass before any physics claim**. Current
 - [x] Bitwise reproducibility under fixed seeds (test)
 - [x] Ensemble averaging over independent realisations (Milestone 2; finite-size `N=32/64/128` comparison in Milestone 3)
 
-**Milestones:** M1 (static phase separation) and M2 (single-quench benchmark)
-are complete — see `results/` and `logbook/`. M2 confirms diffusive coarsening:
-`L = R₀ + (λt)^{1/3}` fits both `L_C` and `L_S` to R² > 0.996, with the
-offset-corrected exponent recovering 1/3. The equilibration diagnostic also
-flags (as designed) that the near-`T_c` `T_i=2.4` leg needs more preparation
-sweeps before Milestone 4.
+**Milestones:** M1 (static phase separation), M2 (single-quench benchmark), and
+M3 (coarsening-law assessment across `N=32/64/128`) are complete — see `results/`
+and `logbook/`. M2/M3 confirm diffusive coarsening: `L = R₀ + (λt)^{1/3}` fits
+`L_C`, `L_S`, `L_E` to R² > 0.99 at every size, and `(L_S−R₀)/N` vs `t/N³`
+collapses across sizes once the offset is controlled. The free exponent is
+stated as illustrative (≈ 1/3, not precision-pinned at these sizes, per the task
+card). The equilibration diagnostic flags (as designed) that the near-`T_c`
+`T_i=2.4` leg needs more preparation sweeps before Milestone 4.
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

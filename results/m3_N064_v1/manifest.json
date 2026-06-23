@@ -1,0 +1,110 @@
+{
+  "run_id": "m3_N064_v1",
+  "timestamp": "2026-06-23T20:55:18Z",
+  "config": {
+    "run_id_prefix": "m3",
+    "description": "Finite-size coarsening-law assessment. Confirm L(t) ~ t^(1/3) across sizes with L_C, L_S, L_E; check lower-cutoff stability and that the window lies below the equilibrium domain scale.",
+    "model": {
+      "magnetisation": 0
+    },
+    "preparation": {
+      "T_i": 10.0,
+      "kernel": "nonlocal",
+      "n_sweeps": 3000
+    },
+    "quench": {
+      "T_f": 1.36
+    },
+    "sizes": [
+      {
+        "N": 32,
+        "t_max": 3000,
+        "n_points": 36
+      },
+      {
+        "N": 64,
+        "t_max": 9000,
+        "n_points": 42
+      },
+      {
+        "N": 128,
+        "t_max": 24000,
+        "n_points": 46
+      }
+    ],
+    "ensemble": {
+      "n_realisations": 10,
+      "seed": 20260623
+    },
+    "einf": {
+      "kernel": "nonlocal",
+      "sweeps_burn": 10000,
+      "sample_every": 120,
+      "n_samples": 40
+    },
+    "analysis": {
+      "lower_cutoff_sweeps": 100,
+      "cutoff_scan": [
+        50,
+        100,
+        200,
+        400,
+        800
+      ],
+      "finite_size_fraction": 0.4,
+      "exponent_grid": {
+        "min": 0.2,
+        "max": 0.5,
+        "n": 61
+      }
+    }
+  },
+  "config_hash": "5a3e9f3bf326c43af17c1c6f48fa6052a75854cc9cf86a06546c7d050afdd581",
+  "seeds": {
+    "base": 20260623,
+    "N": 64
+  },
+  "git": {
+    "commit": "2d03f93d39acd5e724bf1ce4033729d6339ad801",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "0.1.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "trajectory_real000": "d5ba963ce72459b36274b4848fb1eab2ffcf1859e4074b89e2b3e482fc442cf0",
+    "trajectory_real001": "397b0a20fd3bbfe048c442a369354f1559dc5419b58c7be5a967eb851dbb9214",
+    "trajectory_real002": "6bd34e97c914d6de625ba59d83d57f70a27d8f98a3d424ebbe6316d774c4a4f3",
+    "trajectory_real003": "cabf1f6f95aa6af05688bfab24a983eb0bafd4c6cf88ad855e17ddff11b24edf",
+    "trajectory_real004": "0406a72bfd6f3eba2d520066944cd15cffda3026e356fbe2370aa2136db8cc48",
+    "trajectory_real005": "476afbd144a25725d0c86d0cf6fbcb81af4eacc06ad20c1cb8b97b6ae7d2f276",
+    "trajectory_real006": "207b8fa652a95e8e13a82942466c4101a7baa1474115b64ebc6c845c0f9d3688",
+    "trajectory_real007": "eea4314a0d5ef18b6af17b200dca07541d686ac90067d32b6f4006140c46ef74",
+    "trajectory_real008": "70fc2189eb70b266a9f7bc1b4777f2c3b42623cdc9ed9ad8d0156af728a2889d",
+    "trajectory_real009": "5deb799a3738a0e8df4e16cb787e005a8fa2b90feb76cf7d09e646c0b6b12d5f",
+    "ensemble_trajectory": "0b48eaa271d19c79b2587b6342e4b8f621dbd3f12ae1f968e042d829ed17578f",
+    "analysis": "c8fe970c72b0ad51314c457bff735a6da1924892b9e99de771e9a983cbe36b5b",
+    "coarsening_N064": "fcb3ce457524ed7d7ddc81578f25b8ac5e22146c8464b830886415ddbd4faa12"
+  },
+  "schema_version": "1.0",
+  "notes": "Milestone 3 coarsening, N=64"
+}

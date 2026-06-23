@@ -1,0 +1,43 @@
+analysis:
+  cutoff_scan:
+  - 50
+  - 100
+  - 200
+  - 400
+  - 800
+  exponent_grid:
+    max: 0.5
+    min: 0.2
+    n: 61
+  finite_size_fraction: 0.4
+  lower_cutoff_sweeps: 100
+description: Finite-size coarsening-law assessment. Confirm L(t) ~ t^(1/3) across
+  sizes with L_C, L_S, L_E; check lower-cutoff stability and that the window lies
+  below the equilibrium domain scale.
+einf:
+  kernel: nonlocal
+  n_samples: 40
+  sample_every: 120
+  sweeps_burn: 10000
+ensemble:
+  n_realisations: 10
+  seed: 20260623
+model:
+  magnetisation: 0
+preparation:
+  T_i: 10.0
+  kernel: nonlocal
+  n_sweeps: 3000
+quench:
+  T_f: 1.36
+run_id_prefix: m3
+sizes:
+- N: 32
+  n_points: 36
+  t_max: 3000
+- N: 64
+  n_points: 42
+  t_max: 9000
+- N: 128
+  n_points: 46
+  t_max: 24000

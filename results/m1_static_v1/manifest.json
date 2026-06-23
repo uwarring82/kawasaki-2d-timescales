@@ -1,0 +1,71 @@
+{
+  "run_id": "m1_static_v1",
+  "timestamp": "2026-06-23T20:23:39Z",
+  "config": {
+    "run_id": "m1_static_v1",
+    "description": "Static phase-separation demonstrator. Equilibrate M=0 lattices at several temperatures spanning T_c and record snapshots + equilibrium observables.",
+    "model": {
+      "N": 64,
+      "magnetisation": 0
+    },
+    "preparation": {
+      "kernel": "nonlocal",
+      "n_sweeps": 4000
+    },
+    "temperatures": [
+      1.2,
+      1.8,
+      2.269,
+      2.8,
+      4.0
+    ],
+    "ensemble": {
+      "seed": 20260623
+    },
+    "observables": {
+      "with_clusters": true
+    }
+  },
+  "config_hash": "1fa35abea2a103070582129def533540e2171f200d821d54b38f4ad75ff9d730",
+  "seeds": {
+    "base": 20260623
+  },
+  "git": {
+    "commit": "8ae76ce9a3481c40ad55e77f90324480a73bcae7",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "0.1.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "snapshot_T1.200": "e0cd864b98e4ddc1a30f39dd82044874d46e55fbaa0b898b6228c7b60a8a5417",
+    "snapshot_T1.800": "46ab1dee621a4fa5accd14eb6ad77d486e6468b016b61a44ca5298aff936069f",
+    "snapshot_T2.269": "f67aa5f105b21656d0a9a0894bf3156263fd1b5ae1c7b1aec38b31b5f5defdcd",
+    "snapshot_T2.800": "032ea69990f331cb8db6c02c10d3aa05ab8c70a843c242a7fafa6a0f51bd1b0b",
+    "snapshot_T4.000": "813c566d7f28ab78fa65859e679a02e6e5a658d2aa029cd285792a6cb97c56a3",
+    "static_observables": "c2d827282e6042ba850f253e79473f9d12ff76bcd9357340f3eb444170859d8f",
+    "snapshots_grid": "ad330a0e9e66f386472f8c43c24dbaeb2c80cd8c3e1a3a4d8d8fa634c30fea9a",
+    "static_observables_fig": "d28b32ab82ad306b272e18c122bc0a2a6ae222124d4f63b520bccfa7e144ba4a"
+  },
+  "schema_version": "1.0",
+  "notes": "Milestone 1: static phase separation"
+}

@@ -1,0 +1,19 @@
+description: Static phase-separation demonstrator. Equilibrate M=0 lattices at several
+  temperatures spanning T_c and record snapshots + equilibrium observables.
+ensemble:
+  seed: 20260623
+model:
+  N: 64
+  magnetisation: 0
+observables:
+  with_clusters: true
+preparation:
+  kernel: nonlocal
+  n_sweeps: 4000
+run_id: m1_static_v1
+temperatures:
+- 1.2
+- 1.8
+- 2.269
+- 2.8
+- 4.0

@@ -1,0 +1,34 @@
+# Milestone 3 — coarsening-law assessment across N = 32, 64, 128.
+# Same quench as M2 (T_i=10 -> T_f=0.6 T_c, M=0); per-N horizons scaled so the
+# fitting window stays below the finite-size saturation scale (smaller N
+# saturates earlier — the finite-size effect we want to expose).
+run_id_prefix: m3
+description: >-
+  Finite-size coarsening-law assessment. Confirm L(t) ~ t^(1/3) across sizes
+  with L_C, L_S, L_E; check lower-cutoff stability and that the window lies
+  below the equilibrium domain scale.
+model:
+  magnetisation: 0
+preparation:
+  T_i: 10.0
+  kernel: nonlocal
+  n_sweeps: 3000
+quench:
+  T_f: 1.36              # ≈ 0.6 T_c
+sizes:
+  - {N: 32,  t_max: 3000,  n_points: 36}
+  - {N: 64,  t_max: 9000,  n_points: 42}
+  - {N: 128, t_max: 24000, n_points: 46}
+ensemble:
+  n_realisations: 10
+  seed: 20260623
+einf:                    # E_inf(N, T_f, M) working estimate (horizon reported)
+  kernel: nonlocal
+  sweeps_burn: 10000
+  sample_every: 120
+  n_samples: 40
+analysis:
+  lower_cutoff_sweeps: 100         # pre-registration default
+  cutoff_scan: [50, 100, 200, 400, 800]
+  finite_size_fraction: 0.40       # require window L_S < this * N (saturation guard)
+  exponent_grid: {min: 0.20, max: 0.50, n: 61}

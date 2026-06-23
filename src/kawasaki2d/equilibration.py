@@ -115,6 +115,55 @@ def histogram_overlap(a: np.ndarray, b: np.ndarray, *, bins: int | None = None) 
 
 
 @dataclass
+class EquilibriumEnergy:
+    """A working estimate of ``E_∞(N, T, M)`` per spin, with its horizon."""
+
+    mean: float
+    sd: float
+    kernel: str
+    sweeps_burn: int
+    sample_every: int
+    n_samples: int
+
+
+def estimate_equilibrium_energy(
+    n: int,
+    T: float,
+    magnetisation: int,
+    rng: np.random.Generator,
+    *,
+    kernel: str = "nonlocal",
+    sweeps_burn: int = 8000,
+    sample_every: int = 80,
+    n_samples: int = 40,
+) -> EquilibriumEnergy:
+    """Horizon-limited estimate of the equilibrium per-spin energy ``E_∞(N,T,M)``.
+
+    Burns in then averages the per-spin energy over decorrelated samples. The
+    non-local opposite-spin kernel (default) samples the same fixed-``M``
+    canonical equilibrium as local Kawasaki but mixes far faster below ``T_c``.
+    The returned object carries the horizon (burn-in, sampling) so the
+    ``N``/horizon dependence of ``E_∞`` is reported, never hidden — it must not
+    be used as the *sole* coarsening diagnostic (Mpemba-claim gate).
+    """
+    run = _KERNELS[kernel]
+    lattice = init_lattice(n, magnetisation, rng=rng)
+    run(lattice, T, sweeps_burn, rng)
+    es = np.empty(n_samples)
+    for i in range(n_samples):
+        run(lattice, T, sample_every, rng)
+        es[i] = total_energy(lattice) / lattice.size
+    return EquilibriumEnergy(
+        mean=float(es.mean()),
+        sd=float(es.std(ddof=1)),
+        kernel=kernel,
+        sweeps_burn=sweeps_burn,
+        sample_every=sample_every,
+        n_samples=n_samples,
+    )
+
+
+@dataclass
 class EquilibrationComparison:
     """Result of comparing two equilibration runs' equilibrium energy samples."""
 

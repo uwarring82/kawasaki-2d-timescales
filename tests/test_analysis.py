@@ -70,6 +70,29 @@ def test_effective_exponent_of_cube_root():
     assert np.allclose(np.median(alpha), 1.0 / 3.0, atol=0.02)
 
 
+def test_preferred_growth_exponent_recovers_one_third_with_offset():
+    """Linearity scan recovers 1/3 even with a large additive offset."""
+    t = np.geomspace(1, 2e4, 120)
+    L = 5.0 + np.cbrt(0.1 * t)  # large offset, true exponent 1/3
+    scan = analysis.preferred_growth_exponent(t, L)
+    assert abs(scan.best_alpha - 1.0 / 3.0) < 0.02
+    assert scan.best_r2 > 0.999
+
+
+def test_preferred_growth_exponent_recovers_half():
+    t = np.geomspace(1, 2e4, 120)
+    L = 2.0 + 0.3 * np.sqrt(t)  # true exponent 1/2
+    scan = analysis.preferred_growth_exponent(t, L)
+    assert abs(scan.best_alpha - 0.5) < 0.03
+
+
+def test_offset_fit_reports_r_squared_and_positive_lambda():
+    t = np.geomspace(1, 1e4, 80)
+    L = 3.0 + np.cbrt(0.5 * t)
+    fit = analysis.fit_offset_growth(t, L)
+    assert fit.lam > 0 and fit.r_squared > 0.999
+
+
 def test_required_ensemble_size_scales_with_inverse_signal_squared():
     n_small_signal = analysis.required_ensemble_size(1.0, 1.0, signal=0.5)
     n_large_signal = analysis.required_ensemble_size(1.0, 1.0, signal=1.0)

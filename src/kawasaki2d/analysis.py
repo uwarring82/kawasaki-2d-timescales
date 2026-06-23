@@ -222,6 +222,64 @@ def offset_corrected(L: np.ndarray, R0: float) -> np.ndarray:
     return np.asarray(L, float) - R0
 
 
+@dataclass
+class ExponentScan:
+    """Data-driven growth exponent from a linearity scan over ``α``."""
+
+    best_alpha: float
+    best_r2: float
+    alpha_lo: float          # lower edge of the within-tolerance band
+    alpha_hi: float          # upper edge of the within-tolerance band
+    alpha_grid: np.ndarray
+    r2_grid: np.ndarray
+
+
+def preferred_growth_exponent(
+    t: np.ndarray,
+    L: np.ndarray,
+    *,
+    alpha_grid: np.ndarray | None = None,
+    r2_tol: float = 0.0005,
+) -> ExponentScan:
+    """Estimate the growth exponent by maximising the linearity of ``L`` vs ``t^α``.
+
+    For each candidate ``α`` we fit ``L = a + b·t^α`` (a *linear* least-squares
+    problem — no ill-conditioning) and record the ``R²``. For the exact
+    offset-growth form ``L = R0 + (λt)^{1/3}`` the curve is perfectly linear at
+    ``α = 1/3`` and curved elsewhere, so ``R²(α)`` peaks at the true exponent.
+    The reported uncertainty band is the range of ``α`` whose ``R²`` is within
+    ``r2_tol`` of the maximum — broad when the window is short (the honest
+    "thin for a precision exponent" regime), narrow when it is long.
+    """
+    t = np.asarray(t, float)
+    L = np.asarray(L, float)
+    mask = np.isfinite(t) & np.isfinite(L) & (t > 0)
+    t, L = t[mask], L[mask]
+    if t.size < 4:
+        raise ValueError("need at least 4 finite points with t>0")
+    if alpha_grid is None:
+        alpha_grid = np.linspace(0.2, 0.5, 61)
+    r2 = np.empty(alpha_grid.size)
+    for i, a in enumerate(alpha_grid):
+        u = t**a
+        A = np.vstack([np.ones_like(u), u]).T
+        coef, *_ = np.linalg.lstsq(A, L, rcond=None)
+        pred = A @ coef
+        ss_res = float(np.sum((L - pred) ** 2))
+        ss_tot = float(np.sum((L - L.mean()) ** 2))
+        r2[i] = 1.0 - ss_res / ss_tot if ss_tot > 0 else np.nan
+    best = int(np.nanargmax(r2))
+    within = np.where(r2 >= r2[best] - r2_tol)[0]
+    return ExponentScan(
+        best_alpha=float(alpha_grid[best]),
+        best_r2=float(r2[best]),
+        alpha_lo=float(alpha_grid[within.min()]),
+        alpha_hi=float(alpha_grid[within.max()]),
+        alpha_grid=alpha_grid,
+        r2_grid=r2,
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Effective growth exponent                                                    #
 # --------------------------------------------------------------------------- #

@@ -41,6 +41,18 @@ def test_prep_kernel_matches_local_baseline():
     assert abs(comp.mean_a - comp.mean_b) < 5 * np.hypot(comp.sem_a, comp.sem_b)
 
 
+def test_estimate_equilibrium_energy_temperature_ordering():
+    """E_inf(T) per spin: strongly negative at low T, near zero at high T."""
+    (ra,) = spawn_rngs(13, 1)
+    (rb,) = spawn_rngs(14, 1)
+    lowT = eq.estimate_equilibrium_energy(8, 1.0, 0, ra, sweeps_burn=1500, sample_every=30, n_samples=25)
+    hiT = eq.estimate_equilibrium_energy(8, 8.0, 0, rb, sweeps_burn=1500, sample_every=30, n_samples=25)
+    assert lowT.mean < -1.4          # nearly phase-separated
+    assert hiT.mean > lowT.mean      # disordered sits higher
+    assert hiT.mean < 0.0            # still below 0 at finite T
+    assert lowT.sd >= 0
+
+
 def test_energy_trace_saturates():
     (rng,) = spawn_rngs(5, 1)
     sweeps, e = eq.energy_trace(16, 10.0, 0, rng, kernel="nonlocal", n_sweeps=1500, sample_every=25)

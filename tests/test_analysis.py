@@ -53,6 +53,32 @@ def test_crossing_test_finds_sign_change():
     assert verdict.sign_before == -1 and verdict.sign_after == 1
 
 
+def test_offset_corrected_diff_detects_rate_difference():
+    """Different lambda (rate) -> offset-corrected D != 0 even with different R0."""
+    rng = make_rng(7)
+    t = np.geomspace(1, 1e4, 40)
+    # hot coarsens faster (larger lambda) but starts BEHIND in raw L (smaller R0)
+    hot = np.array([0.5 + np.cbrt(0.20 * t) + rng.normal(0, 0.05, t.size) for _ in range(60)])
+    cold = np.array([4.0 + np.cbrt(0.10 * t) + rng.normal(0, 0.05, t.size) for _ in range(60)])
+    dci, R0h, R0c = analysis.offset_corrected_difference_bootstrap(
+        hot, cold, t, rng, cutoff=10, n_boot=800)
+    assert R0c > R0h                          # cold has the larger offset (head start)
+    # after removing offsets, hot is ahead (faster): D > 0 with CI excluding zero, late
+    assert dci.sign[-1] == 1 and dci.excludes_zero[-1]
+
+
+def test_offset_corrected_diff_null_when_same_rate():
+    """Same lambda, different R0 -> offset-corrected D ~ 0 (no rate inversion)."""
+    rng = make_rng(8)
+    t = np.geomspace(1, 1e4, 40)
+    hot = np.array([0.5 + np.cbrt(0.12 * t) + rng.normal(0, 0.05, t.size) for _ in range(60)])
+    cold = np.array([4.0 + np.cbrt(0.12 * t) + rng.normal(0, 0.05, t.size) for _ in range(60)])
+    dci, R0h, R0c = analysis.offset_corrected_difference_bootstrap(
+        hot, cold, t, rng, cutoff=10, n_boot=800)
+    # the offset-corrected difference straddles zero (no genuine rate difference)
+    assert not dci.excludes_zero[-1]
+
+
 def test_fit_offset_growth_recovers_parameters():
     rng = make_rng(3)
     t = np.linspace(1, 1000, 200)

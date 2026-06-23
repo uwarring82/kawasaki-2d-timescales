@@ -53,6 +53,17 @@ def test_estimate_equilibrium_energy_temperature_ordering():
     assert lowT.sd >= 0
 
 
+def test_calibrate_prep_budget_passes_at_high_T():
+    """The independent-chains gate converges at an easy (high-T) point."""
+    res = eq.calibrate_prep_budget(
+        8, 6.0, 0, candidates=[100, 200, 400], ref_burn=1500, base_seed=3,
+        kernel="nonlocal", n_test=16, n_ref=20, safety_tau_mult=10,
+    )
+    assert res["gate_passed"]
+    assert res["gated_budget"] in (100, 200, 400)
+    assert res["tau_E_sweeps"] >= 1.0
+
+
 def test_autocorrelation_time_white_noise():
     rng = np.random.default_rng(0)
     x = rng.normal(size=20000)

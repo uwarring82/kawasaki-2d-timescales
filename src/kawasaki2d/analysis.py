@@ -126,6 +126,59 @@ def difference_bootstrap(
     )
 
 
+def offset_corrected_difference_bootstrap(
+    hot: np.ndarray,
+    cold: np.ndarray,
+    times: np.ndarray,
+    rng: np.random.Generator,
+    *,
+    cutoff: float,
+    n_boot: int = 5000,
+    ci: float = 0.95,
+) -> tuple["DifferenceCI", float, float]:
+    """Bootstrap CI on the **offset-corrected** difference of two preparations.
+
+    ``D(t) = (L_hot(t) − R0_hot) − (L_cold(t) − R0_cold)`` where ``R0`` is fitted
+    independently per leg from ``L = R0 + (λt)^{1/3}`` over ``t > cutoff`` and
+    **re-fitted inside every bootstrap resample**, so the offset uncertainty
+    propagates into the CI. ``hot``/``cold`` are ``(n_realisations, n_times)``.
+    Removing ``R0`` strips the preparation head-start, so a non-zero ``D``
+    reflects a genuine coarsening-*rate* difference, not the initial offset
+    (Milestone-5 verdict quantity; see the M5 protocol amendment).
+
+    Returns ``(DifferenceCI over t>cutoff, R0_hot, R0_cold)``.
+    """
+    hot = np.asarray(hot, float)
+    cold = np.asarray(cold, float)
+    times = np.asarray(times, float)
+    mask = times > cutoff
+    tt = times[mask]
+    nh, nc = hot.shape[0], cold.shape[0]
+
+    def _R0(traj_mean):
+        return fit_offset_growth(tt, traj_mean[mask]).R0
+
+    R0h = _R0(np.nanmean(hot, axis=0))
+    R0c = _R0(np.nanmean(cold, axis=0))
+    d_point = (np.nanmean(hot, axis=0)[mask] - R0h) - (np.nanmean(cold, axis=0)[mask] - R0c)
+
+    boots = np.empty((n_boot, tt.size))
+    for b in range(n_boot):
+        mh = np.nanmean(hot[rng.integers(0, nh, size=nh)], axis=0)
+        mc = np.nanmean(cold[rng.integers(0, nc, size=nc)], axis=0)
+        boots[b] = (mh[mask] - _R0(mh)) - (mc[mask] - _R0(mc))
+    alpha = (1.0 - ci) / 2.0
+    lo = np.nanpercentile(boots, 100 * alpha, axis=0)
+    hi = np.nanpercentile(boots, 100 * (1 - alpha), axis=0)
+    excludes_zero = (lo > 0) | (hi < 0)
+    sign = np.where(excludes_zero, np.sign(d_point), 0).astype(int)
+    return (
+        DifferenceCI(times=tt, diff_mean=d_point, ci_low=lo, ci_high=hi,
+                     excludes_zero=excludes_zero, sign=sign),
+        float(R0h), float(R0c),
+    )
+
+
 @dataclass
 class CrossingVerdict:
     crossed: bool

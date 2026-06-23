@@ -20,7 +20,9 @@ from dataclasses import dataclass
 import numpy as np
 
 from . import dynamics
+from . import observables as _obs
 from .lattice import init_lattice, total_energy
+from .rng import make_rng, spawn_rngs
 
 try:
     from scipy.stats import ks_2samp
@@ -302,3 +304,113 @@ def compare_equilibration(
             f"mean gap={mean_gap:.4f} vs {mean_sigma}·SEM={mean_sigma * combined_sem:.4f}"
         ),
     )
+
+
+# --------------------------------------------------------------------------- #
+# Independent-chains preparation-budget gate (Milestone 4/5)                    #
+# --------------------------------------------------------------------------- #
+
+
+def _independent_final_samples(n, T, M, budget, K, seed, kernel):
+    """K independent chains run `budget` sweeps; per-chain (e/spin, L_C)."""
+    run = _KERNELS[kernel]
+    E = np.empty(K)
+    LC = np.empty(K)
+    for i, rng in enumerate(spawn_rngs(seed, K)):
+        lat = init_lattice(n, M, rng=rng)
+        run(lat, T, budget, rng)
+        if int(lat.sum()) != M:
+            raise AssertionError("preparation kernel violated M conservation")
+        E[i] = total_energy(lat) / lat.size
+        LC[i] = _obs.length_from_correlation(lat)
+    return E, LC
+
+
+def _reference_equilibrium(n, T, M, burn, n_samples, spacing, seed, kernel):
+    """Decorrelated equilibrium samples (e/spin, L_C) from one long chain."""
+    run = _KERNELS[kernel]
+    rng = make_rng(seed)
+    lat = init_lattice(n, M, rng=rng)
+    run(lat, T, burn, rng)
+    E = np.empty(n_samples)
+    LC = np.empty(n_samples)
+    for i in range(n_samples):
+        run(lat, T, spacing, rng)
+        E[i] = total_energy(lat) / lat.size
+        LC[i] = _obs.length_from_correlation(lat)
+    return E, LC
+
+
+def calibrate_prep_budget(
+    n: int,
+    T: float,
+    magnetisation: int,
+    *,
+    candidates,
+    ref_burn: int,
+    base_seed: int,
+    kernel: str = "nonlocal",
+    n_test: int = 40,
+    n_ref: int = 50,
+    ref_spacing_tau_mult: float = 6.0,
+    mean_sigma: float = 4.0,
+    safety_tau_mult: float = 30.0,
+) -> dict:
+    """Calibrate a preparation-sweep budget via the independent-chains gate.
+
+    For each candidate budget ``B``, ``n_test`` chains are run from independent
+    random starts for ``B`` sweeps; their fully-independent final means of the
+    energy and the correlation length ``L_C`` are compared against a long,
+    decorrelated reference equilibrium distribution. A budget *converges* when
+    both means lie within ``mean_sigma`` combined SEM of the reference (mean
+    stability is robust; KS p-values are reported only as supporting evidence,
+    being noisy at modest ``n_test`` near ``T_c``). The gated budget is the
+    smallest converged candidate, raised to cover ``>= safety_tau_mult * tau_E``.
+
+    Returns a dict with ``tau_E_sweeps``, per-candidate diagnostics,
+    ``smallest_converged_budget``, ``tau_floor_budget``, ``gated_budget``, and
+    ``gate_passed``. ``tau_E`` is measured directly (never scaled across sizes).
+    """
+    candidates = [int(c) for c in candidates]
+    tau, _ = measure_autocorrelation_sweeps(
+        n, T, magnetisation, make_rng(base_seed + 1), kernel=kernel,
+        burn=min(ref_burn, 8000), n_samples=4000, sample_every=2,
+    )
+    spacing = max(2, int(round(ref_spacing_tau_mult * tau)))
+    refE, refLC = _reference_equilibrium(n, T, magnetisation, ref_burn, n_ref, spacing,
+                                         base_seed + 2, kernel)
+    refE_m, refLC_m = float(refE.mean()), float(refLC.mean())
+    refE_sem = float(refE.std(ddof=1) / np.sqrt(len(refE)))
+    refLC_sem = float(refLC.std(ddof=1) / np.sqrt(len(refLC)))
+
+    rows = []
+    for b in candidates:
+        E, LC = _independent_final_samples(n, T, magnetisation, b, n_test, base_seed + 1000 + b, kernel)
+        eM, lM = float(E.mean()), float(LC.mean())
+        eS = float(E.std(ddof=1) / np.sqrt(len(E)))
+        lS = float(LC.std(ddof=1) / np.sqrt(len(LC)))
+        dE = abs(eM - refE_m) / np.hypot(eS, refE_sem)
+        dLC = abs(lM - refLC_m) / np.hypot(lS, refLC_sem)
+        ks_pe = float(ks_2samp(E, refE).pvalue) if _HAVE_SCIPY else float("nan")
+        ks_pl = float(ks_2samp(LC, refLC).pvalue) if _HAVE_SCIPY else float("nan")
+        rows.append({"budget": b, "mean_energy": eM, "mean_LC": lM,
+                     "energy_gap_sem": dE, "LC_gap_sem": dLC,
+                     "ks_p_energy": ks_pe, "ks_p_LC": ks_pl,
+                     "converged": bool(dE <= mean_sigma and dLC <= mean_sigma)})
+
+    converged = [r["budget"] for r in rows if r["converged"]]
+    smallest = converged[0] if converged else None
+    tau_floor = int(np.ceil(safety_tau_mult * tau))
+    if smallest is None:
+        gated = int(candidates[-1])
+    else:
+        need = max(smallest, tau_floor)
+        ge = [b for b in candidates if b >= need]
+        gated = int(ge[0]) if ge else int(candidates[-1])
+    return {
+        "N": n, "T": float(T), "tau_E_sweeps": float(tau), "ref_spacing_sweeps": spacing,
+        "ref_mean_energy": refE_m, "ref_mean_LC": refLC_m,
+        "candidates": rows, "smallest_converged_budget": smallest,
+        "tau_floor_budget": tau_floor, "gated_budget": gated,
+        "gate_passed": smallest is not None,
+    }

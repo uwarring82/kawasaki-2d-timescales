@@ -1,0 +1,106 @@
+{
+  "budgets": {
+    "10.0": 250,
+    "2.4": 2000
+  },
+  "legs": {
+    "10.0": {
+      "N": 128,
+      "T": 10.0,
+      "tau_E_sweeps": 2.0509695498891687,
+      "ref_spacing_sweeps": 12,
+      "ref_mean_energy": -0.2063720703125,
+      "ref_mean_LC": 0.6745175834629027,
+      "candidates": [
+        {
+          "budget": 250,
+          "mean_energy": -0.2049560546875,
+          "mean_LC": 0.673241826707986,
+          "energy_gap_sem": 0.46082172205041866,
+          "LC_gap_sem": 1.3257141129504708,
+          "ks_p_energy": 0.4487509382377221,
+          "ks_p_LC": 0.19654661540054194,
+          "converged": true
+        },
+        {
+          "budget": 500,
+          "mean_energy": -0.19868977864583334,
+          "mean_LC": 0.6728754174486263,
+          "energy_gap_sem": 2.230804117568867,
+          "LC_gap_sem": 1.578360778858872,
+          "ks_p_energy": 0.2233170911099376,
+          "ks_p_LC": 0.25406145439371186,
+          "converged": true
+        },
+        {
+          "budget": 1000,
+          "mean_energy": -0.2025146484375,
+          "mean_LC": 0.6726450193711968,
+          "energy_gap_sem": 1.1713731320021568,
+          "LC_gap_sem": 1.7798780100747003,
+          "ks_p_energy": 0.2233170911099376,
+          "ks_p_LC": 0.19654661540054194,
+          "converged": true
+        },
+        {
+          "budget": 2000,
+          "mean_energy": -0.20105997721354166,
+          "mean_LC": 0.67279064037194,
+          "energy_gap_sem": 1.4712671531102282,
+          "LC_gap_sem": 1.6004512242111257,
+          "ks_p_energy": 0.060014516609978724,
+          "ks_p_LC": 0.14973161796536105,
+          "converged": true
+        }
+      ],
+      "smallest_converged_budget": 250,
+      "tau_floor_budget": 62,
+      "gated_budget": 250,
+      "gate_passed": true
+    },
+    "2.4": {
+      "N": 128,
+      "T": 2.4,
+      "tau_E_sweeps": 39.639434936232156,
+      "ref_spacing_sweeps": 238,
+      "ref_mean_energy": -1.20166015625,
+      "ref_mean_LC": 2.2712561336562356,
+      "candidates": [
+        {
+          "budget": 2000,
+          "mean_energy": -1.1950276692708333,
+          "mean_LC": 2.2357194764643817,
+          "energy_gap_sem": 1.1637251547437961,
+          "LC_gap_sem": 0.6765501244875689,
+          "ks_p_energy": 0.17212278843334353,
+          "ks_p_LC": 0.40260630923878793,
+          "converged": true
+        },
+        {
+          "budget": 4000,
+          "mean_energy": -1.1952006022135417,
+          "mean_LC": 2.205377887696327,
+          "energy_gap_sem": 1.2921508765141363,
+          "LC_gap_sem": 1.2562367211638885,
+          "ks_p_energy": 0.360302429671728,
+          "ks_p_LC": 0.25406145439371186,
+          "converged": true
+        },
+        {
+          "budget": 8000,
+          "mean_energy": -1.2029317220052083,
+          "mean_LC": 2.3100554797343116,
+          "energy_gap_sem": 0.27511618064018817,
+          "LC_gap_sem": 0.8319397006237481,
+          "ks_p_energy": 0.9474320584673062,
+          "ks_p_LC": 0.7474187136185677,
+          "converged": true
+        }
+      ],
+      "smallest_converged_budget": 2000,
+      "tau_floor_budget": 1190,
+      "gated_budget": 2000,
+      "gate_passed": true
+    }
+  }
+}

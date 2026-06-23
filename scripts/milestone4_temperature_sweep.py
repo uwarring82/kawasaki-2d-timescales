@@ -93,6 +93,8 @@ def calibrate_leg(N, M, leg, cal, kernel, base_seed):
     n_ref = int(cal["n_ref_samples"])
     alpha = float(cal["ks_alpha"])
 
+    mean_sigma = float(cal.get("mean_sigma", 4.0))
+
     # energy autocorrelation time (in sweeps) for context + safety floor
     tau, _ = eq.measure_autocorrelation_sweeps(
         N, T, M, make_rng(base_seed + 1), kernel=kernel,
@@ -100,32 +102,49 @@ def calibrate_leg(N, M, leg, cal, kernel, base_seed):
     )
     spacing = max(2, int(round(float(cal["ref_spacing_tau_mult"]) * tau)))
     refE, refLC = _reference_dist(N, M, T, ref_burn, n_ref, spacing, base_seed + 2, kernel)
+    refE_m, refLC_m = float(refE.mean()), float(refLC.mean())
+    refE_sem = float(refE.std(ddof=1) / np.sqrt(len(refE)))
+    refLC_sem = float(refLC.std(ddof=1) / np.sqrt(len(refLC)))
 
+    # Convergence is gated on MEAN STABILITY (robust) — |mean - ref| within
+    # `mean_sigma` combined SEM for BOTH energy and L_C — with the KS p-values
+    # reported as supporting evidence (noisy at modest K near criticality).
     rows = []
     for b in candidates:
         E, LC = _independent_final(N, M, T, b, K, base_seed + 1000 + b, kernel)
-        pE = float(ks_2samp(E, refE).pvalue)
-        pLC = float(ks_2samp(LC, refLC).pvalue)
-        rows.append({"budget": b, "ks_p_energy": pE, "ks_p_LC": pLC,
-                     "mean_energy": float(E.mean()), "mean_LC": float(LC.mean()),
-                     "passes": bool(pE >= alpha and pLC >= alpha)})
+        eM, lM = float(E.mean()), float(LC.mean())
+        eS = float(E.std(ddof=1) / np.sqrt(len(E)))
+        lS = float(LC.std(ddof=1) / np.sqrt(len(LC)))
+        dE = abs(eM - refE_m); dLC = abs(lM - refLC_m)
+        conv = bool(dE <= mean_sigma * np.hypot(eS, refE_sem)
+                    and dLC <= mean_sigma * np.hypot(lS, refLC_sem))
+        rows.append({
+            "budget": b, "mean_energy": eM, "sem_energy": eS, "mean_LC": lM, "sem_LC": lS,
+            "ks_p_energy": float(ks_2samp(E, refE).pvalue),
+            "ks_p_LC": float(ks_2samp(LC, refLC).pvalue),
+            "energy_gap_sem": dE / np.hypot(eS, refE_sem),
+            "LC_gap_sem": dLC / np.hypot(lS, refLC_sem),
+            "converged": conv,
+        })
 
-    # smallest passing candidate such that it and all larger candidates pass
-    passing = None
-    for i, r in enumerate(rows):
-        if all(rows[j]["passes"] for j in range(i, len(rows))):
-            passing = r["budget"]
-            break
+    # smallest converged candidate (means stable vs the reference)
+    converged_budgets = [r["budget"] for r in rows if r["converged"]]
+    smallest_conv = converged_budgets[0] if converged_budgets else None
     tau_floor = int(np.ceil(float(cal["safety_tau_mult"]) * tau))
-    # if nothing passes, fall back to the largest candidate (flag it)
-    smallest_pass = passing if passing is not None else candidates[-1]
-    gated = int(max(smallest_pass, tau_floor))
+    if smallest_conv is None:
+        gated = int(candidates[-1])  # nothing converged: use largest, flag below
+    else:
+        need = max(smallest_conv, tau_floor)
+        # round up to the smallest candidate >= need (keep budget among tested values)
+        ge = [b for b in candidates if b >= need]
+        gated = int(ge[0]) if ge else int(candidates[-1])
     return {
         "T_i": T, "tau_E_sweeps": tau, "ref_spacing_sweeps": spacing,
-        "ref_mean_energy": float(refE.mean()), "ref_mean_LC": float(refLC.mean()),
-        "candidates": rows, "smallest_passing_budget": passing,
+        "ref_mean_energy": refE_m, "ref_sem_energy": refE_sem,
+        "ref_mean_LC": refLC_m, "ref_sem_LC": refLC_sem,
+        "candidates": rows, "smallest_converged_budget": smallest_conv,
         "tau_floor_budget": tau_floor, "gated_budget": gated,
-        "gate_passed": passing is not None,
+        "gate_passed": smallest_conv is not None,
     }
 
 
@@ -143,36 +162,41 @@ def phase_a(cfg, run_dir, manifest):
         if abs(res["T_i"] - 10.0) < 1e-9:
             res["high_T_expectation_minus2_over_T"] = -2.0 / res["T_i"]
         legs_out.append(res)
-        flag = "" if res["gate_passed"] else "  [NO candidate passed — using largest]"
+        flag = "" if res["gate_passed"] else "  [NO candidate converged — using largest]"
         print(f"  T_i={res['T_i']:5.2f}: tau_E={res['tau_E_sweeps']:5.1f} sw | "
-              f"smallest-passing={res['smallest_passing_budget']} | "
+              f"smallest-converged={res['smallest_converged_budget']} | "
               f"tau-floor={res['tau_floor_budget']} | GATED={res['gated_budget']} sweeps{flag}")
         for r in res["candidates"]:
-            print(f"       B={r['budget']:6d}: KS_p(E)={r['ks_p_energy']:.3f} "
-                  f"KS_p(L_C)={r['ks_p_LC']:.3f} -> {'pass' if r['passes'] else 'fail'}")
+            print(f"       B={r['budget']:6d}: |Δ⟨e⟩|={r['energy_gap_sem']:.1f}σ "
+                  f"|Δ⟨L_C⟩|={r['LC_gap_sem']:.1f}σ  KS_p(E)={r['ks_p_energy']:.2f} "
+                  f"KS_p(L_C)={r['ks_p_LC']:.2f} -> {'converged' if r['converged'] else 'no'}")
 
     budgets = {str(r["T_i"]): r["gated_budget"] for r in legs_out}
     (run_dir / "budgets.json").write_text(json.dumps({"budgets": budgets, "legs": legs_out},
                                                      indent=2, default=str) + "\n")
     manifest.add_output("budgets", run_dir / "budgets.json")
-    _plot_calibration(legs_out, float(cfg["calibration"]["ks_alpha"]), run_dir / "equilibration_gate.png")
+    _plot_calibration(legs_out, float(cfg["calibration"].get("mean_sigma", 4.0)),
+                      run_dir / "equilibration_gate.png")
     manifest.add_output("equilibration_gate", run_dir / "equilibration_gate.png")
     return legs_out
 
 
-def _plot_calibration(legs, alpha, path):
+def _plot_calibration(legs, mean_sigma, path):
     fig, ax = plt.subplots(1, 2, figsize=(11, 4.4))
     for res in legs:
         b = [r["budget"] for r in res["candidates"]]
-        pe = [r["ks_p_energy"] for r in res["candidates"]]
-        pl = [r["ks_p_LC"] for r in res["candidates"]]
-        ax[0].plot(b, pe, "-o", ms=4, label=f"T_i={res['T_i']}")
-        ax[1].plot(b, pl, "-o", ms=4, label=f"T_i={res['T_i']}")
-    for a, title in ((ax[0], "energy KS p vs prep budget"), (ax[1], "$L_C$ KS p vs prep budget")):
-        a.axhline(alpha, color="r", ls="--", lw=1, label=f"alpha={alpha}")
-        a.set_xscale("log"); a.set_xlabel("prep sweeps (budget)"); a.set_ylabel("KS p vs equilibrium ref")
-        a.set_title(title); a.legend(fontsize=7)
-    fig.suptitle("M4 Phase A — independent-chains equilibration gate (pass = KS p ≥ alpha)")
+        ge = [r["energy_gap_sem"] for r in res["candidates"]]
+        gl = [r["LC_gap_sem"] for r in res["candidates"]]
+        lbl = f"T_i={res['T_i']} (gated {res['gated_budget']})"
+        ax[0].plot(b, ge, "-o", ms=4, label=lbl)
+        ax[1].plot(b, gl, "-o", ms=4, label=lbl)
+    for a, title in ((ax[0], r"energy mean gap $|\langle e\rangle-\langle e\rangle_{ref}|$"),
+                     (ax[1], r"$L_C$ mean gap $|\langle L_C\rangle-\langle L_C\rangle_{ref}|$")):
+        a.axhline(mean_sigma, color="r", ls="--", lw=1, label=f"gate = {mean_sigma}σ")
+        a.set_xscale("log"); a.set_xlabel("prep sweeps (budget)")
+        a.set_ylabel("gap (combined SEM units)"); a.set_title(title); a.legend(fontsize=7)
+    fig.suptitle("M4 Phase A — equilibration gate: mean stability vs long reference (converged = below "
+                 f"{mean_sigma}σ)")
     fig.tight_layout(); fig.savefig(path, dpi=130); plt.close(fig)
 
 

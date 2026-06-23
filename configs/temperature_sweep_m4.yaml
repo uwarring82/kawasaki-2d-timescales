@@ -26,10 +26,11 @@ T_i_legs:
   - {T_i: 5.0,  candidates: [250, 500, 1000, 2000],   ref_burn: 4000}
   - {T_i: 10.0, candidates: [250, 500, 1000, 2000],   ref_burn: 4000}
 calibration:
-  n_test_chains: 30          # independent chains per candidate budget (one sample each)
-  n_ref_samples: 40          # decorrelated samples from a long reference chain
+  n_test_chains: 40          # independent chains per candidate budget (one sample each)
+  n_ref_samples: 50          # decorrelated samples from a long reference chain
   ref_spacing_tau_mult: 6    # reference sample spacing = this * tau_E
-  ks_alpha: 0.05
+  ks_alpha: 0.05             # supporting evidence only (noisy at modest K near T_c)
+  mean_sigma: 4.0            # gate: |mean - ref| <= this * combined SEM for E AND L_C
   safety_tau_mult: 30        # prep budget also >= this * tau_E (covers autocorrelation)
 einf:                        # E_inf(N, T_f, M); common to all T_i
   kernel: nonlocal

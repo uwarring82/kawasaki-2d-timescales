@@ -90,9 +90,16 @@ with no raw crossing.
 the offset-corrected difference `(L−R₀)_hot − (L−R₀)_cold` is null for `L_S`
 (equal coarsening rate) and negative for `L_C`/`L_E` (cold stays ahead) — it
 favours the hot leg in no estimator, with BH-FDR control and resolving power
-confirmed (not variance-limited). A clean, controlled deflationary result. The
-small-N spectral probe and full `(T_i,T_f,N)` grid are deferred (see the M5
-logbook + amendment).
+confirmed (not variance-limited). A clean, controlled deflationary result.
+
+**Spectral tier (4×4 exact diagonalisation) — _no spectral Mpemba_.** The exact
+local-Kawasaki transition matrix on the 12870-state M=0 sector gives a
+slow-mode overlap `a₂(T_i)` that is monotone with no zero-crossing across the
+`T_f` scan: the hotter prep always has *more* slow-mode overlap (relaxes slower,
+anti-Mpemba). The spectral gap is validated against the simulated autocorrelation
+(τ_int 955 vs predicted 951, ratio 1.00). Both tiers agree — the spectral picture
+*predicts* the N=128 no-inversion. The full `(T_i,T_f,N)` grid is deferred (see
+the M5 logbook + amendment).
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

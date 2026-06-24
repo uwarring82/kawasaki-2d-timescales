@@ -1,0 +1,77 @@
+{
+  "sector_size": 12870,
+  "primary_pair": {
+    "T_i_hot": 10.0,
+    "T_i_cold": 2.4
+  },
+  "T_f_scan": [
+    {
+      "T_f": 1.134592657106511,
+      "T_f_over_Tc": 0.5,
+      "slow_mode_index": 8,
+      "lambda_slow": 0.9999357964456334,
+      "tau_exp_sweeps": 973.435103928164,
+      "a2_hot": 3.4215448038371434,
+      "a2_cold": 2.826548959713949,
+      "a2_grid": {
+        "2.4": 2.826548959713949,
+        "2.8": 3.0728032649639285,
+        "3.5": 3.256228801897106,
+        "5.0": 3.36838351908629,
+        "10.0": 3.4215448038371434
+      },
+      "strong_mpemba": false,
+      "weak_mpemba_anywhere": false,
+      "primary_pair_mpemba": false
+    },
+    {
+      "T_f": 1.3615111885278133,
+      "T_f_over_Tc": 0.6,
+      "slow_mode_index": 8,
+      "lambda_slow": 0.9998686223608511,
+      "tau_exp_sweeps": 475.696585535551,
+      "a2_hot": 1.8514304325272204,
+      "a2_cold": 1.467894372579236,
+      "a2_grid": {
+        "2.4": 1.467894372579236,
+        "2.8": 1.6267673351611458,
+        "3.5": 1.7449993837697182,
+        "5.0": 1.8172017100402575,
+        "10.0": 1.8514304325272204
+      },
+      "strong_mpemba": false,
+      "weak_mpemba_anywhere": false,
+      "primary_pair_mpemba": false
+    },
+    {
+      "T_f": 1.7018889856597665,
+      "T_f_over_Tc": 0.75,
+      "slow_mode_index": 8,
+      "lambda_slow": 0.999657140438488,
+      "tau_exp_sweeps": 182.25912892953184,
+      "a2_hot": 0.9813543433834363,
+      "a2_cold": 0.6583160162675936,
+      "a2_grid": {
+        "2.4": 0.6583160162675936,
+        "2.8": 0.792171058863451,
+        "3.5": 0.8917146130053206,
+        "5.0": 0.952471216576146,
+        "10.0": 0.9813543433834363
+      },
+      "strong_mpemba": false,
+      "weak_mpemba_anywhere": false,
+      "primary_pair_mpemba": false
+    }
+  ],
+  "gap_validation": {
+    "tau_exp_spectral_sweeps": 475.69658545353894,
+    "predicted_tau_int": 951.3931709070779,
+    "simulated_tau_int_sweeps": 955.0824759351308,
+    "ratio_sim_over_pred": 1.0038777922113267
+  },
+  "verdict": {
+    "outcome": "no_spectral_mpemba",
+    "consistent_with_coarsening_no_inversion": true,
+    "rationale": "a_2(T_i) is monotonically increasing across the T_f scan with no zero crossing and no interval where |a_2| decreases: every hotter preparation has GREATER slow-mode overlap (relaxes slower) than every colder one. No spectral Mpemba (weak or strong); for the primary pair |a_2(hot)|>|a_2(cold)| (anti-Mpemba). This PREDICTS the larger-N no-supported-inversion verdict (m5_verdict_v1)."
+  }
+}

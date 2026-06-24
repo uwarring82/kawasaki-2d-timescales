@@ -164,8 +164,18 @@ control **before** the crossing search (Milestone 5) is run.
 
 ## Acknowledgements
 
-This project was inspired by a great explainer video on the Mpemba effect:
+This project was inspired by **"Simulating and understanding phase change"**, a
+3Blue1Brown guest video by **Vilas Winstein** (Spectral Collective) — deriving
+the Boltzmann distribution, defining temperature, and simulating a liquid/vapour
+(lattice-gas) phase change with Monte-Carlo dynamics:
 https://www.youtube.com/watch?v=itRV2jEtV8Q
+
+The video's lattice model, Boltzmann sampling, and phase-change picture are the
+foundation this project builds on. The key technical difference: the video uses
+**Glauber** (non-conserved, single-spin-flip) dynamics, whereas this project
+studies the **Kawasaki** (conserved-order-parameter, exchange) variant and its
+coarsening / Mpemba behaviour — and a companion Spectral Collective video
+analyses the mean-field phase change. Home page: https://www.3blue1brown.com
 
 ## Citation
 

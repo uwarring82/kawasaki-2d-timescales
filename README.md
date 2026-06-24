@@ -11,6 +11,49 @@ The governing specification is the task card
 [`TASK-kawasaki-mpemba-boundary-v4.md`](TASK-kawasaki-mpemba-boundary-v4.md).
 This README documents what is implemented and how to reproduce it.
 
+## Findings in plain language
+
+**The question.** Cool a two-component system (think a binary alloy) below its
+ordering temperature and it *phase-separates*: the two species clump into
+domains that grow over time — "coarsening". We asked a sharp version of the
+**Mpemba question**: can a system that *started hotter* end up ordering *faster*
+than one that started colder? Concretely, does a near-infinite-temperature start
+(`T_i=10`, tiny initial domains) ever overtake a just-above-critical start
+(`T_i=2.4`, which begins with larger domains)?
+
+**What we built.** A small, fully reproducible simulator of this system
+(conserved-density *Kawasaki* dynamics), in which every number is traceable to
+the exact code, configuration, and random seed that produced it. It was
+validated hard before any physics claim: it conserves the right quantity exactly,
+its energetics match a brute-force calculation, and on a tiny lattice it
+reproduces the *exact* textbook equilibrium distribution.
+
+**What we found — simulation at realistic sizes.** Domains grow by the expected
+diffusive law (size ∝ time^(1/3)) across every size tested. For the headline
+comparison at 128×128, the colder start leads the entire time and is never
+overtaken. We then checked whether that lead is merely a *head start* (the colder
+system simply begins with bigger domains) hiding a hidden speed advantage for the
+hotter one. After mathematically subtracting the head start, the hotter system is
+*still* not faster — equal or slower by every measure, with proper statistical
+controls (bootstrap confidence intervals, false-discovery-rate correction, and a
+verified ability to detect an effect had one existed). **No Mpemba inversion.**
+
+**What we found — exact theory at tiny size.** On a 4×4 lattice we solved the
+dynamics *exactly* by diagonalising the full 12,870-state transition matrix (no
+simulation noise). The spectral theory of the Mpemba effect says a faster
+relaxer overlaps *less* with the slowest-decaying mode. We found the hotter start
+consistently overlaps *more* — the opposite of Mpemba — across bath temperatures.
+The exact calculation reproduces the simulator's measured relaxation time to
+within 1%, and it *predicts* the no-inversion result later seen at large size.
+
+**Bottom line.** Two independent methods — exact diagonalisation on a tiny
+lattice and a statistically controlled simulation at a realistic size — **agree:
+there is no Mpemba-like inversion in this system at the conditions studied.** A
+hotter start does not order faster here. This is a clean, well-controlled
+*negative* result, which is as scientifically valuable as a positive one would
+have been. (Scope: one operational point — `M=0`, `T_f=0.6 T_c`, the designated
+primary `T_i` pair; the wider grid is set up but deferred.)
+
 ## Model
 
 - Square lattice, periodic boundary conditions.
@@ -37,21 +80,23 @@ This README documents what is implemented and how to reproduce it.
 
 ```
 src/kawasaki2d/
-  lattice.py      # lattice construction, energy, magnetisation, ΔE
-  dynamics.py     # Kawasaki NN-exchange Metropolis kernel + sweeps
-  observables.py  # E, M, C(r,t), S(k,t), L_C/L_S/L_E, k*, interface density, P(A,t)
-  protocols.py    # equilibrate → quench → track
-  analysis.py     # bootstrap, scaling collapse, crossing tests (pre-registered)
-  io.py           # YAML config, append-only results, output schema
-  provenance.py   # per-run manifest: config hash, git commit, seed, env, checksums
-  rng.py          # seeding utilities
-  cli.py          # `kawasaki-run` entry point
-configs/          # YAML run configs (pre-registered analysis plan lives here)
-scripts/          # milestone driver scripts
-tests/            # validation-gate tests (must pass before any physics claim)
-results/          # append-only run outputs, each with a manifest
-logbook/          # dated, append-only human logbook
-docs/             # physics notes, output schema
+  lattice.py        # lattice construction, energy, magnetisation, ΔE
+  dynamics.py       # Kawasaki NN-exchange kinetic kernel + non-local prep sampler
+  observables.py    # E, M, C(r,t), S(k,t), L_C/L_S/L_E, k*, interface density, P(A,t)
+  protocols.py      # equilibrate → quench → track (CoarseningTrajectory, S(k,t))
+  equilibration.py  # autocorrelation time + independent-chains equilibration gate, E_inf
+  analysis.py       # offset fit, difference + offset-corrected bootstrap, FDR, exponents
+  spectral.py       # exact-diagonalisation spectral tier (transition matrix, slow mode)
+  io.py             # YAML config, append-only results, output schema
+  provenance.py     # per-run manifest: config hash, git commit, seed, env, checksums
+  rng.py            # seeding utilities
+  cli.py            # `kawasaki-run` entry point
+configs/            # YAML run configs + the pre-registration (preregistration_m5.yaml)
+scripts/            # milestone drivers: milestone1_static … milestone5_crossing, milestone_spectral
+tests/              # validation-gate + analysis tests (70; must pass before any claim)
+results/            # append-only run outputs, each with a manifest
+logbook/            # dated, append-only human logbook (+ M5 protocol amendment)
+docs/               # physics notes, output schema
 ```
 
 ## Quickstart
@@ -72,6 +117,8 @@ The task card defines gates that **must pass before any physics claim**. Current
 - [x] Ergodicity + detailed balance of the exchange proposal on a small lattice (test)
 - [x] Bitwise reproducibility under fixed seeds (test)
 - [x] Ensemble averaging over independent realisations (Milestone 2; finite-size `N=32/64/128` comparison in Milestone 3)
+
+## Milestones & verdicts (technical summary)
 
 **Milestones:** M1 (static phase separation), M2 (single-quench benchmark), and
 M3 (coarsening-law assessment across `N=32/64/128`) are complete — see `results/`

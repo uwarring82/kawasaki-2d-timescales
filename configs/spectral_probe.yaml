@@ -1,0 +1,26 @@
+# Milestone 5 spectral tier — exact-diagonalisation Mpemba probe (4x4, M=0).
+# The only tier at which a spectral Mpemba verdict is awardable (card
+# diagnosability note). Tests whether the spectral picture predicts the
+# larger-N coarsening route behaviour found in m5_verdict_v1.
+run_id: m5_spectral_v1
+description: >-
+  Exact local-Kawasaki Metropolis transition matrix on the 4x4 M=0 sector
+  (12870 states) at the bath temperature; slow-mode overlap a_2(T_i) and the
+  spectral Mpemba verdict, across a T_f scan, with a gap validation against the
+  simulated energy autocorrelation.
+lattice:
+  N: 4
+  magnetisation: 0
+T_f_over_Tc: [0.5, 0.6, 0.75]
+T_f_default_over_Tc: 0.6
+T_i_grid: [2.4, 2.8, 3.5, 5.0, 10.0]
+T_i_fine: {min: 2.30, max: 12.0, n: 60}
+primary_pair: {T_i_hot: 10.0, T_i_cold: 2.4}
+spectrum_k: 30
+overlap_tol: 1.0e-6
+gap_validation:
+  kernel: local
+  sweeps_burn: 2000
+  n_samples: 40000
+  seed: 2
+seed: 90909

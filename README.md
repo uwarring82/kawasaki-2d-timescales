@@ -162,6 +162,11 @@ The analysis plan (fitting windows, estimator definitions, verdict thresholds,
 the declared `(T_i, T_f, N)` grid and the primary pair) is committed to version
 control **before** the crossing search (Milestone 5) is run.
 
+## Acknowledgements
+
+This project was inspired by a great explainer video on the Mpemba effect:
+https://www.youtube.com/watch?v=itRV2jEtV8Q
+
 ## Citation
 
 If you use this software, please cite it (see `CITATION.cff`). Release `v1.0.0`

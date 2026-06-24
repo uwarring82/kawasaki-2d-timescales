@@ -1,0 +1,15 @@
+# Reviews
+
+Independent, critical reviews of this project live here, one append-only file per
+review, named `YYYY-MM-DD-<reviewer>.md`. The review brief is
+[`TASK-kawasaki-mpemba-review-v1.md`](../TASK-kawasaki-mpemba-review-v1.md).
+
+Conventions (mirroring the logbook):
+- **Append-only.** A revised review is a new dated file, not an edit of an old one.
+- **Reproducible.** If a check involved re-running the code, drop the resulting
+  `results/<run_id>/` (with its manifest) so the check is itself regenerable, and
+  reference the commit you reviewed.
+- **Actionable.** State a verdict per claim (C1–C6), a severity per issue
+  (blocker / major / minor), and a one-paragraph overall assessment.
+
+No reviews recorded yet.

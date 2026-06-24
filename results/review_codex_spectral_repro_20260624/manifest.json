@@ -1,0 +1,80 @@
+{
+  "run_id": "review_codex_spectral_repro_20260624",
+  "timestamp": "2026-06-24T11:18:16Z",
+  "config": {
+    "run_id": "review_codex_spectral_repro_20260624",
+    "description": "Exact local-Kawasaki Metropolis transition matrix on the 4x4 M=0 sector (12870 states) at the bath temperature; slow-mode overlap a_2(T_i) and the spectral Mpemba verdict, across a T_f scan, with a gap validation against the simulated energy autocorrelation.",
+    "lattice": {
+      "N": 4,
+      "magnetisation": 0
+    },
+    "T_f_over_Tc": [
+      0.5,
+      0.6,
+      0.75
+    ],
+    "T_f_default_over_Tc": 0.6,
+    "T_i_grid": [
+      2.4,
+      2.8,
+      3.5,
+      5.0,
+      10.0
+    ],
+    "T_i_fine": {
+      "min": 2.3,
+      "max": 12.0,
+      "n": 60
+    },
+    "primary_pair": {
+      "T_i_hot": 10.0,
+      "T_i_cold": 2.4
+    },
+    "spectrum_k": 30,
+    "overlap_tol": 1e-06,
+    "gap_validation": {
+      "kernel": "local",
+      "sweeps_burn": 2000,
+      "n_samples": 40000,
+      "seed": 2
+    },
+    "seed": 90909
+  },
+  "config_hash": "99cdc878196d9299ba9784e5d639c8e0edd9ae183a8c45bb587152f6924dbeff",
+  "seeds": {
+    "base": 90909
+  },
+  "git": {
+    "commit": "32bbcc6516121f0119c29f22869813fa4797e51c",
+    "dirty": false,
+    "branch": "HEAD"
+  },
+  "environment": {
+    "python_version": "3.9.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-x86_64-i386-64bit",
+    "machine": "x86_64",
+    "kawasaki2d_version": "1.0.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "1.23.5",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "1.23.5",
+      "scipy": "1.10.0",
+      "pyyaml": "6.0",
+      "PyYAML": "6.0",
+      "numba": "0.56.4",
+      "matplotlib": "3.7.1",
+      "pandas": "1.5.3"
+    }
+  },
+  "outputs": {
+    "spectral_report": "03fc0b6e184fd1c1bfdced4661680407669a4eaba9e8fc334660600475491e66",
+    "spectral_mpemba_fig": "a34f639aa5d996f0956abb7393821ca5ac60584d22b5b2398241e6899376ada5"
+  },
+  "schema_version": "1.0",
+  "notes": "M5 spectral tier (4x4 exact diagonalisation)"
+}

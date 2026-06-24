@@ -1,0 +1,55 @@
+{
+  "run_id": "m5_offset_sensitivity_v1",
+  "timestamp": "2026-06-24T11:57:14Z",
+  "config": {
+    "source": "m5_primary_v1",
+    "cutoff": 100,
+    "upper": 15000,
+    "n_boot": 5000,
+    "ci": 0.95,
+    "fdr_alpha": 0.05,
+    "models": [
+      "fixed_0.30",
+      "fixed_1/3",
+      "fixed_0.36",
+      "free"
+    ]
+  },
+  "config_hash": "77f9279945dafff9f362760dff68d79ecb7b21e34cfb2704dc9e292ae70160c2",
+  "seeds": {
+    "base": 50505
+  },
+  "git": {
+    "commit": "b4e1c794e69533a2045712c43c9e728e715125b9",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "1.0.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "outputs": {
+    "offset_sensitivity_csv": "b1b5ad884dc2b4b758acfefca0d040c5ce1a2869ce836ef30282ad52a9fa6af5",
+    "offset_sensitivity_json": "2663c7bbc43909ee00f5c2642e413fc650350274207287f2b620e89f83ad71b0",
+    "offset_sensitivity_fig": "fcc2c79239f1853c799b5da4e273e69864996c972e853909f7672f85d2623b0d"
+  },
+  "schema_version": "1.0",
+  "notes": "M5 offset-model sensitivity (review response)"
+}

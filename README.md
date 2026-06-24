@@ -33,10 +33,15 @@ diffusive law (size ∝ time^(1/3)) across every size tested. For the headline
 comparison at 128×128, the colder start leads the entire time and is never
 overtaken. We then checked whether that lead is merely a *head start* (the colder
 system simply begins with bigger domains) hiding a hidden speed advantage for the
-hotter one. After mathematically subtracting the head start, the hotter system is
-*still* not faster — equal or slower by every measure, with proper statistical
-controls (bootstrap confidence intervals, false-discovery-rate correction, and a
-verified ability to detect an effect had one existed). **No Mpemba inversion.**
+hotter one. After mathematically subtracting the head start, the hotter start
+still does not overtake — under the pre-registered analysis no measure favours it,
+and the bar we set for "a real effect" (at least two of three independent length
+measures pointing the same way) is met under *no* reasonable variant of the
+analysis. (One robustness variant does nudge a single measure slightly toward the
+hotter start — one of three, not enough to count, and surfaced openly in the
+independent reviews.) With full statistical controls (bootstrap confidence
+intervals, false-discovery-rate correction, and a verified ability to detect an
+effect had one existed): **no Mpemba inversion.**
 
 **What we found — exact theory at tiny size.** On a 4×4 lattice we solved the
 dynamics *exactly* by diagonalising the full 12,870-state transition matrix (no
@@ -134,18 +139,26 @@ with no raw crossing.
 
 **Milestone 5 (pre-registered crossing search, primary pair `T_i`=10 vs 2.4,
 `T_f`=0.6 `T_c`, N=128) — verdict: _no supported inversion_.** No raw overtaking;
-the offset-corrected difference `(L−R₀)_hot − (L−R₀)_cold` is null for `L_S`
-(equal coarsening rate) and negative for `L_C`/`L_E` (cold stays ahead) — it
-favours the hot leg in no estimator, with BH-FDR control and resolving power
-confirmed (not variance-limited). A clean, controlled deflationary result.
+under the **pre-registered fixed-1/3 offset model** the offset-corrected
+difference `(L−R₀)_hot − (L−R₀)_cold` is null for `L_S` (equal coarsening rate)
+and negative for `L_C`/`L_E` (cold stays ahead) — it favours the hot leg in no
+estimator, stable across fixed exponents 0.30–0.36, with BH-FDR control and
+resolving power confirmed (not variance-limited). **Caveat (review round):** under
+a *free-exponent* offset stress test `L_S` flips to weakly favour the hot leg
+(`D≈+0.40`), while `L_C`/`L_E` stay negative — so the two-of-three hot-inversion
+rule is met under *no* offset model (the verdict is robust), but the "no estimator
+favours hot" phrasing holds only for the fixed-1/3 model. See
+`results/m5_offset_sensitivity_v1/` and `reviews/`.
 
 **Spectral tier (4×4 exact diagonalisation) — _no spectral Mpemba_.** The exact
 local-Kawasaki transition matrix on the 12870-state M=0 sector gives a
 slow-mode overlap `a₂(T_i)` that is monotone with no zero-crossing across the
 `T_f` scan: the hotter prep always has *more* slow-mode overlap (relaxes slower,
 anti-Mpemba). The spectral gap is validated against the simulated autocorrelation
-(τ_int 955 vs predicted 951, ratio 1.00). Both tiers agree — the spectral picture
-*predicts* the N=128 no-inversion. The full `(T_i,T_f,N)` grid is deferred (see
+(τ_int 955 vs predicted 951, ratio 1.00). Both tiers point away from a
+hot-overtake: the spectral picture is *qualitatively consistent with* the N=128
+no-inversion (a consistency statement across two different observables, not a
+derivation of one from the other). The full `(T_i,T_f,N)` grid is deferred (see
 the M5 logbook + amendment).
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task

@@ -171,6 +171,12 @@ def offset_corrected_difference_bootstrap(
     hot = np.asarray(hot, float)
     cold = np.asarray(cold, float)
     times = np.asarray(times, float)
+    if hot.shape[1] != times.shape[0] or cold.shape[1] != times.shape[0]:
+        raise ValueError(
+            f"time dimension mismatch: hot {hot.shape[1]}, cold {cold.shape[1]}, "
+            f"times {times.shape[0]} — slice the estimator arrays to the same time "
+            "columns as `times` (e.g. when a saturation guard truncates the window)"
+        )
     mask = times > cutoff
     tt = times[mask]
     nh, nc = hot.shape[0], cold.shape[0]

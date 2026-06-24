@@ -6,17 +6,32 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-Review round (two independent adversarial reviews of v1.0.0;
-`reviews/2026-06-24-codex.md`, `reviews/2026-06-24-kimi.md`). No blocker; the
-scoped `no_supported_inversion` headline stands. Changes are clarifications +
-a robustness artifact, not a change to the science.
+Four independent adversarial reviews of v1.0.0 (`reviews/2026-06-24-*.md`; two via
+the primed v1 brief, two via the open/unprimed v2 brief). All converge: **no
+blocker; the scoped `no_supported_inversion` headline stands.** Changes are a
+software-robustness fix, clarifications, and reproducible artifacts — not a change
+to the science. The committed `N=128` verdict is unaffected by every fix below.
+
+### Fixed
+- **Saturation-guard `IndexError`** in `scripts/milestone5_crossing.py` (found by
+  the kimi v2 review): the offset-corrected bootstrap received full-length
+  estimator arrays with a truncated `times` when the saturation guard clipped the
+  window (`upper < t_max`, e.g. at `N=64`). Now the arrays are sliced to the kept
+  time columns, and `analysis.offset_corrected_difference_bootstrap` raises a
+  clear `ValueError` on a time-dimension mismatch (regression test added). No
+  effect at `N=128` (there `upper = t_max`, so the slice is a no-op).
+- **`oc_late_sign` reporting** (found by the GPT-5 Codex v2 review): the M5 report
+  now reports a late-window sign of `0` unless there is an FDR-significant late
+  point (previously it could show a nonzero sign with no significant point —
+  harmless to the verdict, which already required FDR significance, but
+  misreadable).
 
 ### Added
 - `analysis.offset_corrected_difference_bootstrap` gains an `exponent` parameter
   (default `1/3` = pre-registered; `None` = free per-resample linearity scan).
 - `scripts/m5_offset_sensitivity.py` and `results/m5_offset_sensitivity_v1/`: a
   reproducible offset-model sensitivity artifact (fixed {0.30, 1/3, 0.36} vs
-  free-exponent) for the primary pair. +1 test.
+  free-exponent) for the primary pair. +2 tests (free-exponent, length-guard).
 
 ### Changed (wording, prompted by review)
 - Qualified the C4 claim: the offset-corrected difference favours the hot leg in
@@ -27,8 +42,11 @@ a robustness artifact, not a change to the science.
   is robust; only the "no estimator favours hot" phrasing was model-dependent.
 - Free-exponent growth estimates remain **illustrative** (not all bands centre on
   1/3); the fixed-1/3 law fit is the supported statement.
-- "Spectral predicts coarsening" softened to *qualitative consistency* (two
-  different observables; not a derivation).
+- "Spectral predicts coarsening" softened to *qualitative consistency* in both the
+  technical and the plain-language README sections (two different observables; not
+  a derivation).
+- Citation/README: release `v1.0.0` is "to be archived" to Zenodo (DOI minting
+  pending) rather than "is archived", until the DOI is minted.
 
 ## [1.0.0] — 2026-06-24
 

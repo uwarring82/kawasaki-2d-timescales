@@ -81,6 +81,24 @@ def test_offset_corrected_diff_free_exponent_runs_and_handles_nan():
     assert dci.pvalue is not None
 
 
+def test_offset_corrected_diff_rejects_time_length_mismatch():
+    """Regression (review kimi-v2): truncated `times` vs full arrays must raise
+    a clear error, not a cryptic IndexError (the M5 saturation-guard bug)."""
+    rng = make_rng(5)
+    t = np.geomspace(1, 1e4, 40)
+    hot = np.array([np.cbrt(0.1 * t) + rng.normal(0, 0.05, t.size) for _ in range(20)])
+    cold = np.array([np.cbrt(0.1 * t) + rng.normal(0, 0.05, t.size) for _ in range(20)])
+    truncated = t[t <= t[25]]            # mimic upper < t_max
+    with pytest.raises(ValueError):
+        analysis.offset_corrected_difference_bootstrap(
+            hot, cold, truncated, rng, cutoff=5, n_boot=50)
+    # the correct call (arrays sliced to match) succeeds
+    keep = t <= t[25]
+    dci, _, _ = analysis.offset_corrected_difference_bootstrap(
+        hot[:, keep], cold[:, keep], t[keep], rng, cutoff=5, n_boot=50)
+    assert dci.diff_mean.shape[0] == int((t[keep] > 5).sum())
+
+
 def test_offset_corrected_diff_null_when_same_rate():
     """Same lambda, different R0 -> offset-corrected D ~ 0 (no rate inversion)."""
     rng = make_rng(8)

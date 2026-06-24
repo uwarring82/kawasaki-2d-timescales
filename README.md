@@ -49,7 +49,9 @@ simulation noise). The spectral theory of the Mpemba effect says a faster
 relaxer overlaps *less* with the slowest-decaying mode. We found the hotter start
 consistently overlaps *more* — the opposite of Mpemba — across bath temperatures.
 The exact calculation reproduces the simulator's measured relaxation time to
-within 1%, and it *predicts* the no-inversion result later seen at large size.
+within 1%, and it *points the same way* as the no-inversion result later seen at
+large size (a qualitative consistency between two different observables, not a
+derivation of one from the other).
 
 **Bottom line.** Two independent methods — exact diagonalisation on a tiny
 lattice and a statistically controlled simulation at a realistic size — **agree:
@@ -193,7 +195,7 @@ analyses the mean-field phase change. Home page: https://www.3blue1brown.com
 ## Citation
 
 If you use this software, please cite it (see `CITATION.cff`). Release `v1.0.0`
-is archived to Zenodo:
+is **to be archived** to Zenodo (DOI minting pending — see `RELEASE.md`):
 
 > Kawasaki-2D contributors (2026). *kawasaki2d: 2D Kawasaki–Ising coarsening and
 > the operational boundary of the Mpemba effect* (v1.0.0). Zenodo.

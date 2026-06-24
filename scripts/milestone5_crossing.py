@@ -176,16 +176,21 @@ def stage_analyse(cfg, run_dir, manifest):
         raw = analysis.difference_bootstrap(hot[:, win], cold[:, win], sweeps[win], rng,
                                             n_boot=n_boot, ci=ci)
         raw_cross = analysis.crossing_test(raw)
-        # offset-corrected difference bootstrap (verdict quantity)
+        # offset-corrected difference bootstrap (verdict quantity).
+        # Slice the estimator arrays to the SAME time columns as the times we
+        # pass, so a saturation-truncated window (upper < t_max) stays consistent
+        # (else the internal mask length != array length -> IndexError).
+        keep = sweeps <= upper
         oc, R0h, R0c = analysis.offset_corrected_difference_bootstrap(
-            hot, cold, sweeps[(sweeps <= upper)], rng, cutoff=cutoff, n_boot=n_boot, ci=ci)
+            hot[:, keep], cold[:, keep], sweeps[keep], rng, cutoff=cutoff, n_boot=n_boot, ci=ci)
         oc_cross = analysis.crossing_test(oc)
         # BH-FDR across time points on the offset-corrected p-values
         bh = analysis.benjamini_hochberg(oc.pvalue, alpha=fdr_alpha)
-        # late-window robust sign (FDR-significant points in the last third)
+        # late-window robust sign: only assign a sign where there is an
+        # FDR-significant late point (otherwise report 0 — no resolved direction).
         late = oc.times > (cutoff + 0.66 * (upper - cutoff))
         late_sig = bh.rejected & late
-        late_sign = int(np.sign(np.nanmean(oc.diff_mean[late]))) if late.any() else 0
+        late_sign = int(np.sign(np.nanmean(oc.diff_mean[late]))) if late_sig.any() else 0
         results["estimators"][name] = {
             "R0_hot": R0h, "R0_cold": R0c,
             "raw_crossing": raw_cross.crossed, "raw_detail": raw_cross.detail,

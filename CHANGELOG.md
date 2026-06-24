@@ -56,4 +56,4 @@ number, figure, and verdict is regenerable from a recorded
 - Full `(T_i, T_f, N)` grid with across-pairs FDR, and the `T_f` scan / secondary
   `T_i` pairs at coarsening sizes (compute) — see the M5 protocol amendment.
 
-[1.0.0]: https://github.com/OWNER/kawasaki-2d-timescales/releases/tag/v1.0.0
+[1.0.0]: https://github.com/uwarring82/kawasaki-2d-timescales/releases/tag/v1.0.0

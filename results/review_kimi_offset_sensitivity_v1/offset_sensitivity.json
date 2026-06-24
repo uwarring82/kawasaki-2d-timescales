@@ -1,0 +1,135 @@
+{
+  "results": {
+    "fixed_0.30": {
+      "L_C": {
+        "D_final": -0.790932343777035,
+        "ci": [
+          -0.9026448792081687,
+          -0.6790459849423189
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "L_S": {
+        "D_final": -0.013319375403856526,
+        "ci": [
+          -0.34633751419670566,
+          0.33942918872226063
+        ],
+        "fdr_late_significant": false,
+        "late_sign": 0
+      },
+      "L_E": {
+        "D_final": -1.532226712823796,
+        "ci": [
+          -1.6587393180710033,
+          -1.4052553613568666
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "two_of_three_hot_inversion": false
+    },
+    "fixed_1/3": {
+      "L_C": {
+        "D_final": -0.7423917436644527,
+        "ci": [
+          -0.8492127335704367,
+          -0.6347022975319458
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "L_S": {
+        "D_final": -0.019424429468930526,
+        "ci": [
+          -0.3376363179755349,
+          0.31857032124678736
+        ],
+        "fdr_late_significant": false,
+        "late_sign": 0
+      },
+      "L_E": {
+        "D_final": -1.4532513698615173,
+        "ci": [
+          -1.5747351935133045,
+          -1.3315046611674015
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "two_of_three_hot_inversion": false
+    },
+    "fixed_0.36": {
+      "L_C": {
+        "D_final": -0.7100324385518415,
+        "ci": [
+          -0.8141967027911754,
+          -0.605995701677842
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "L_S": {
+        "D_final": -0.023477679957828457,
+        "ci": [
+          -0.33185207409952494,
+          0.3045253454646545
+        ],
+        "fdr_late_significant": false,
+        "late_sign": 0
+      },
+      "L_E": {
+        "D_final": -1.400588922042437,
+        "ci": [
+          -1.519587215798353,
+          -1.281446767999643
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "two_of_three_hot_inversion": false
+    },
+    "free": {
+      "L_C": {
+        "D_final": -1.4078443212410132,
+        "ci": [
+          -1.530670830887617,
+          -1.2961035698539276
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "L_S": {
+        "D_final": 0.4007882952935411,
+        "ci": [
+          0.10934818359250449,
+          0.6604619021886774
+        ],
+        "fdr_late_significant": true,
+        "late_sign": 1
+      },
+      "L_E": {
+        "D_final": -1.5680201931190014,
+        "ci": [
+          -1.6837569106070187,
+          -1.4622628708636185
+        ],
+        "fdr_late_significant": true,
+        "late_sign": -1
+      },
+      "two_of_three_hot_inversion": false
+    }
+  },
+  "conclusion": {
+    "two_of_three_hot_inversion_under_any_model": false,
+    "verdict_robust": true,
+    "L_S_sign_by_model": {
+      "fixed_0.30": 0,
+      "fixed_1/3": 0,
+      "fixed_0.36": 0,
+      "free": 1
+    },
+    "summary": "Across fixed {0.30, 1/3, 0.36} the offset-corrected difference is null for L_S and significantly negative for L_C/L_E. Under the free-exponent model L_S flips to a significant POSITIVE difference, but L_C/L_E remain significantly negative \u2014 so the two-of-three HOT-inversion rule is met under NO offset model. The no_supported_inversion verdict is robust; only the auxiliary 'no estimator favours hot' wording is model-dependent (it holds for the pre-registered fixed-1/3 model, not for the free-exponent stress test)."
+  }
+}

@@ -1,0 +1,56 @@
+analysis:
+  ci: 0.95
+  fdr_alpha: 0.05
+  finite_size_fraction: 0.4
+  lower_cutoff_sweeps: 100
+  n_boot: 5000
+description: Crossing search for the designated primary pair (T_i^hot=10 vs T_i^cold=2.4)
+  at T_f=0.6 T_c, N=128. Verdict on the offset-corrected difference (L_hot-R0_hot)
+  - (L_cold-R0_cold); raw difference also reported.
+einf:
+  kernel: nonlocal
+  n_samples: 40
+  sample_every: 120
+  sweeps_burn: 10000
+ensemble:
+  alpha: 0.05
+  max_realisations: 24
+  pilot_realisations: 12
+  seed: 60606
+  target_power: 0.8
+gate:
+  legs:
+  - T_i: 10.0
+    candidates:
+    - 250
+    - 500
+    - 1000
+    - 2000
+    ref_burn: 4000
+  - T_i: 2.4
+    candidates:
+    - 1000
+    - 2000
+    - 4000
+    - 8000
+    ref_burn: 16000
+  mean_sigma: 4.0
+  n_ref: 30
+  n_test: 24
+  safety_tau_mult: 30
+model:
+  N: 64
+  magnetisation: 0
+preparation:
+  kernel: nonlocal
+primary_pair:
+  T_f_over_Tc: 0.6
+  T_i_cold: 2.4
+  T_i_hot: 10.0
+quench:
+  schedule:
+    n_points: 42
+    t_max: 8000
+run_id_gate: review_kimi_m5_gate_N064_v1
+run_id_sweep: review_kimi_m5_sweep_N064_v1
+run_id_verdict: review_kimi_m5_verdict_N064_v1

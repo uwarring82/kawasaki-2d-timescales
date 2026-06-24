@@ -1,0 +1,118 @@
+{
+  "run_id": "review_kimi_m5_sweep_seed2_v2",
+  "timestamp": "2026-06-24T13:32:43Z",
+  "config": {
+    "analysis": {
+      "ci": 0.95,
+      "fdr_alpha": 0.05,
+      "finite_size_fraction": 0.4,
+      "lower_cutoff_sweeps": 100,
+      "n_boot": 5000
+    },
+    "description": "Crossing search for the designated primary pair (T_i^hot=10 vs T_i^cold=2.4) at T_f=0.6 T_c, N=128. Verdict on the offset-corrected difference (L_hot-R0_hot) - (L_cold-R0_cold); raw difference also reported.",
+    "einf": {
+      "kernel": "nonlocal",
+      "n_samples": 40,
+      "sample_every": 150,
+      "sweeps_burn": 16000
+    },
+    "ensemble": {
+      "alpha": 0.05,
+      "max_realisations": 16,
+      "pilot_realisations": 8,
+      "seed": 60606,
+      "target_power": 0.8
+    },
+    "gate": {
+      "legs": [
+        {
+          "T_i": 10.0,
+          "candidates": [
+            250,
+            500,
+            1000,
+            2000
+          ],
+          "ref_burn": 4000
+        },
+        {
+          "T_i": 2.4,
+          "candidates": [
+            2000,
+            4000,
+            8000
+          ],
+          "ref_burn": 16000
+        }
+      ],
+      "mean_sigma": 4.0,
+      "n_ref": 30,
+      "n_test": 24,
+      "safety_tau_mult": 30
+    },
+    "model": {
+      "N": 128,
+      "magnetisation": 0
+    },
+    "preparation": {
+      "kernel": "nonlocal"
+    },
+    "primary_pair": {
+      "T_f_over_Tc": 0.6,
+      "T_i_cold": 2.4,
+      "T_i_hot": 10.0
+    },
+    "quench": {
+      "schedule": {
+        "n_points": 40,
+        "t_max": 15000
+      }
+    },
+    "run_id_gate": "review_kimi_m5_gate_seed2_v2",
+    "run_id_sweep": "review_kimi_m5_sweep_seed2_v2",
+    "run_id_verdict": "review_kimi_m5_verdict_seed2_v2"
+  },
+  "config_hash": "d62f8b481cca51a4a9ff9309cc7cbf10eacce00c393f14eecc660638480847a5",
+  "seeds": {
+    "base": 60606
+  },
+  "git": {
+    "commit": "6b82507fd697399d3cebc50d204cd0e626754ede",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "1.0.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0"
+    }
+  },
+  "outputs": {
+    "hot_E": "81a12bd668350312497af6814c54abdc2053e7365c4151878537cf2bb10c6b8a",
+    "hot_LC": "028bbb24d8a3d6c98abbadcb828d010ad445a89637d7c3d8f79b74f8595d7ded",
+    "hot_LS": "e39b459524b4d220020bfe256fda3a12e31b3d609107ea99bab2fd88eea1ecac",
+    "cold_E": "4f7589d0e07cd9cbe1293195b1e170f5a9619bcfeaa9b44fe629b7fbaf24c50d",
+    "cold_LC": "0050cc6d846a76164efdc2dfc910143f88f9146c5063af9486d8b12e0f6078e6",
+    "cold_LS": "bbb9d9ad0d934ddff830a5a788ce85f3a37de6fc8257f74fe6bc4d19ec14d78b",
+    "sweep_meta": "3f16c3ae9877feb192babb2838e6838df1b34f20a700422f13aa0f713821633a"
+  },
+  "schema_version": "1.0",
+  "notes": "M5 primary-pair ensembles"
+}

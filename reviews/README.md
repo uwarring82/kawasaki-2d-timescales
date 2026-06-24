@@ -1,8 +1,13 @@
 # Reviews
 
 Independent, critical reviews of this project live here, one append-only file per
-review, named `YYYY-MM-DD-<reviewer>.md`. The review brief is
-[`TASK-kawasaki-mpemba-review-v1.md`](../TASK-kawasaki-mpemba-review-v1.md).
+review, named `YYYY-MM-DD-<reviewer>.md`. Two review briefs are available:
+
+- [`TASK-kawasaki-mpemba-review-v1.md`](../TASK-kawasaki-mpemba-review-v1.md) —
+  a primed brief that names the claims and the authors' suspected weak points.
+- [`TASK-kawasaki-mpemba-review-v2.md`](../TASK-kawasaki-mpemba-review-v2.md) —
+  an open, unprimed brief that asks for an independent assessment without naming
+  any soft spots (write your own pass before reading prior reviews).
 
 Conventions (mirroring the logbook):
 - **Append-only.** A revised review is a new dated file, not an edit of an old one.

@@ -146,16 +146,25 @@ def offset_corrected_difference_bootstrap(
     cutoff: float,
     n_boot: int = 5000,
     ci: float = 0.95,
+    exponent: float | None = 1.0 / 3.0,
 ) -> tuple["DifferenceCI", float, float]:
     """Bootstrap CI on the **offset-corrected** difference of two preparations.
 
     ``D(t) = (L_hot(t) − R0_hot) − (L_cold(t) − R0_cold)`` where ``R0`` is fitted
-    independently per leg from ``L = R0 + (λt)^{1/3}`` over ``t > cutoff`` and
+    independently per leg from ``L = R0 + (λt)^{α}`` over ``t > cutoff`` and
     **re-fitted inside every bootstrap resample**, so the offset uncertainty
     propagates into the CI. ``hot``/``cold`` are ``(n_realisations, n_times)``.
     Removing ``R0`` strips the preparation head-start, so a non-zero ``D``
     reflects a genuine coarsening-*rate* difference, not the initial offset
     (Milestone-5 verdict quantity; see the M5 protocol amendment).
+
+    ``exponent`` fixes the growth exponent used to fit ``R0`` (default ``1/3`` —
+    the **pre-registered** model). Pass ``exponent=None`` for the *free-exponent*
+    sensitivity variant: each leg's exponent is chosen per resample by the
+    linearity scan (:func:`preferred_growth_exponent`). The free variant is
+    exploratory — the conclusion can depend on the offset model (reviewers found
+    that ``L_S`` flips sign under it), so it is a robustness check, not the
+    confirmatory test.
 
     Returns ``(DifferenceCI over t>cutoff, R0_hot, R0_cold)``.
     """
@@ -167,7 +176,15 @@ def offset_corrected_difference_bootstrap(
     nh, nc = hot.shape[0], cold.shape[0]
 
     def _R0(traj_mean):
-        return fit_offset_growth(tt, traj_mean[mask]).R0
+        L = traj_mean[mask]
+        finite = np.isfinite(L)
+        tloc, Lloc = tt[finite], L[finite]
+        if tloc.size < 3:
+            return float("nan")
+        a = exponent if exponent is not None else preferred_growth_exponent(tloc, Lloc).best_alpha
+        u = tloc ** a
+        A = np.vstack([np.ones_like(u), u]).T
+        return float(np.linalg.lstsq(A, Lloc, rcond=None)[0][0])
 
     R0h = _R0(np.nanmean(hot, axis=0))
     R0c = _R0(np.nanmean(cold, axis=0))

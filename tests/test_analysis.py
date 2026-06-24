@@ -67,6 +67,20 @@ def test_offset_corrected_diff_detects_rate_difference():
     assert dci.sign[-1] == 1 and dci.excludes_zero[-1]
 
 
+def test_offset_corrected_diff_free_exponent_runs_and_handles_nan():
+    """The free-exponent variant runs, propagates, and tolerates NaN (L_E-like)."""
+    rng = make_rng(11)
+    t = np.geomspace(1, 1e4, 40)
+    hot = np.array([0.5 + np.cbrt(0.18 * t) + rng.normal(0, 0.05, t.size) for _ in range(40)])
+    cold = np.array([3.0 + np.cbrt(0.10 * t) + rng.normal(0, 0.05, t.size) for _ in range(40)])
+    cold[:, :3] = np.nan   # mimic undefined early L_E
+    dci, R0h, R0c = analysis.offset_corrected_difference_bootstrap(
+        hot, cold, t, rng, cutoff=5, n_boot=300, exponent=None)
+    assert np.isfinite(R0h) and np.isfinite(R0c)
+    assert dci.diff_mean.shape == dci.ci_low.shape
+    assert dci.pvalue is not None
+
+
 def test_offset_corrected_diff_null_when_same_rate():
     """Same lambda, different R0 -> offset-corrected D ~ 0 (no rate inversion)."""
     rng = make_rng(8)

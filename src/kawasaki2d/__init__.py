@@ -4,7 +4,7 @@ See the task card ``TASK-kawasaki-mpemba-boundary-v4.md`` for the governing
 specification and ``docs/physics.md`` for conventions and derivations.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 import math
 

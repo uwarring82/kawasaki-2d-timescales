@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kawasaki2d"
-version = "0.1.0"
+version = "1.0.0"
 description = "Reproducible 2D Kawasaki-Ising coarsening demonstrator and operational boundary test for the Mpemba effect under conserved dynamics."
 readme = "README.md"
 requires-python = ">=3.10"

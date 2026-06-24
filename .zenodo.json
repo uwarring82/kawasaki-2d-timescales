@@ -1,0 +1,33 @@
+{
+  "title": "kawasaki2d: 2D Kawasaki-Ising coarsening and the operational boundary of the Mpemba effect",
+  "description": "A small, reproducible 2D Kawasaki-Ising demonstrator of conserved-order-parameter phase separation, used to study quench-dependent relaxation and coarsening timescales and to map the operational boundary between finite-system, mode-resolved anomalous relaxation and thermodynamic-limit coarsening. Includes an exact-diagonalisation spectral Mpemba probe (4x4) and an offset-controlled, pre-registered crossing search at N=128; both tiers find no Mpemba-like inversion at the studied operational points.",
+  "version": "1.0.0",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": [
+    "Ising model",
+    "Kawasaki dynamics",
+    "conserved order parameter",
+    "phase separation",
+    "coarsening",
+    "Mpemba effect",
+    "Monte Carlo",
+    "nonequilibrium relaxation",
+    "exact diagonalisation",
+    "reproducibility",
+    "FAIR"
+  ],
+  "creators": [
+    { "name": "Kawasaki-2D contributors" }
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "arXiv:2502.01758",
+      "scheme": "arxiv",
+      "resource_type": "publication-article"
+    }
+  ],
+  "notes": "Code under MIT; data and figures under CC-BY-4.0. Every reported number, figure, and verdict is regenerable from a recorded (config, commit, seed, environment) tuple."
+}

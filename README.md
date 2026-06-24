@@ -115,6 +115,19 @@ The analysis plan (fitting windows, estimator definitions, verdict thresholds,
 the declared `(T_i, T_f, N)` grid and the primary pair) is committed to version
 control **before** the crossing search (Milestone 5) is run.
 
+## Citation
+
+If you use this software, please cite it (see `CITATION.cff`). Release `v1.0.0`
+is archived to Zenodo:
+
+> Kawasaki-2D contributors (2026). *kawasaki2d: 2D Kawasaki–Ising coarsening and
+> the operational boundary of the Mpemba effect* (v1.0.0). Zenodo.
+> https://doi.org/10.5281/zenodo.XXXXXXX
+
+(The DOI placeholder is replaced with the minted Zenodo DOI on release — see
+`RELEASE.md`.)
+
 ## Licence
 
 Code: MIT (`LICENSE`). Data and figures: CC-BY-4.0 (`LICENSE-DATA`).
+

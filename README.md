@@ -59,10 +59,12 @@ there is no Mpemba-like inversion in this system at the conditions studied.** A
 hotter start does not order faster here. This is a clean, well-controlled
 *negative* result, which is as scientifically valuable as a positive one would
 have been. The headline was established at one designated operational point
-(`M=0`, `T_f=0.6 T_c`, primary `T_i` pair, `N=128`) and then **stress-tested by
-four independent adversarial reviews** (no blocker; see `reviews/`). Broadening
-to the wider `(T_i, T_f, N)` grid is **in progress** — results will be reported
-here once the grid run completes.
+(`M=0`, `T_f=0.6 T_c`, primary `T_i` pair, `N=128`), then **stress-tested by four
+independent adversarial reviews** (no blocker; see `reviews/`), and then
+**broadened by a grid search** across initial temperature, bath temperature, and
+two system sizes: of **48 hotter-vs-colder preparation pairs**, **none** shows a
+real (false-discovery-controlled) "hotter overtakes colder" inversion. The
+negative result holds across the grid, not just at the single point.
 
 ## Model
 
@@ -163,8 +165,20 @@ anti-Mpemba). The spectral gap is validated against the simulated autocorrelatio
 (τ_int 955 vs predicted 951, ratio 1.00). Both tiers point away from a
 hot-overtake: the spectral picture is *qualitatively consistent with* the N=128
 no-inversion (a consistency statement across two different observables, not a
-derivation of one from the other). The full `(T_i,T_f,N)` grid is deferred (see
-the M5 logbook + amendment).
+derivation of one from the other).
+
+**Milestone 6 (grid search across `(T_i, T_f, N)`) — verdict: _no supported
+inversion across the grid_.** Ensembles for every `T_i ∈ {2.4…10}` at every
+`T_f/T_c ∈ {0.5, 0.6, 0.75}` and `N ∈ {32, 64}`; all hot>cold pairs tested for a
+directional offset-corrected inversion with a per-pair saturation window and
+BH-FDR across the whole grid. **0 of 48 tested pairs meet the two-of-three
+hot-inversion rule even before FDR** (smallest per-pair 2-of-3 p = 0.244 ≫ 0.05);
+12 near-critical pairs had no pre-saturation window (finite-size). The `N=64`
+cold-reference pairs reproduce the M5 "cold leads" result across the `T_f` scan.
+The single `L_S` estimator leans positive in many pairs — the same offset-
+sensitivity the reviews flagged — but `L_C`/`L_E` never corroborate it, so the
+two-of-three rule filters it out grid-wide. The full `N=128` grid (beyond the
+primary pair) remains compute-deferred.
 
 FAIR / provenance / equilibration / Mpemba-claim / reporting gates: see the task
 card. Provenance manifests are emitted by `provenance.py`; the human logbook is

@@ -1,0 +1,51 @@
+analysis:
+  ci: 0.95
+  fdr_alpha: 0.05
+  finite_size_fraction: 0.4
+  lower_cutoff_sweeps: 100
+  n_boot: 4000
+description: Grid crossing search. N in {32, 64} fully (T_i x T_f); the N=128 primary
+  pair is the M5 anchor (full N=128 grid is compute-deferred). Prep budgets reuse
+  the N=64-calibrated equilibration gate (conservative for N=32; the primary pair
+  was gated directly at N=128).
+einf:
+  kernel: nonlocal
+  n_samples: 30
+  sample_every: 120
+  sweeps_burn: 8000
+ensemble:
+  n_realisations: 24
+  seed: 70707
+grid:
+  N:
+  - 32
+  - 64
+  T_f_over_Tc:
+  - 0.5
+  - 0.6
+  - 0.75
+  T_i:
+  - 2.4
+  - 2.8
+  - 3.5
+  - 5.0
+  - 10.0
+model:
+  magnetisation: 0
+preparation:
+  budgets:
+    '10.0': 250
+    '2.4': 2000
+    '2.8': 1000
+    '3.5': 500
+    '5.0': 250
+  kernel: nonlocal
+run_id_sweep: m6_grid_sweep_v1
+run_id_verdict: m6_grid_verdict_v1
+schedule:
+  '32':
+    n_points: 34
+    t_max: 4000
+  '64':
+    n_points: 40
+    t_max: 8000

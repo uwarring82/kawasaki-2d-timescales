@@ -27,6 +27,14 @@ to the science. The committed `N=128` verdict is unaffected by every fix below.
   misreadable).
 
 ### Added
+- **Milestone 6 — grid search** (`scripts/milestone6_grid.py`, `configs/grid_m6.yaml`,
+  `results/m6_grid_sweep_v1/`, `results/m6_grid_verdict_v1/`): broadens the
+  primary-pair verdict across `T_i × T_f` at `N ∈ {32, 64}`. All hot>cold pairs
+  tested for a directional offset-corrected inversion with per-pair saturation
+  windows and BH-FDR across the grid. **Verdict: no supported inversion across the
+  grid** — 0 of 48 tested pairs meet the two-of-three rule (smallest 2-of-3
+  p = 0.244); the `N=64` cold-reference pairs reproduce the M5 result. (Full
+  `N=128` grid still compute-deferred.)
 - `analysis.offset_corrected_difference_bootstrap` gains an `exponent` parameter
   (default `1/3` = pre-registered; `None` = free per-resample linearity scan).
 - `scripts/m5_offset_sensitivity.py` and `results/m5_offset_sensitivity_v1/`: a

@@ -1,0 +1,104 @@
+{
+  "run_id": "m6_grid_sweep_v1",
+  "timestamp": "2026-06-25T06:59:11Z",
+  "config": {
+    "run_id_sweep": "m6_grid_sweep_v1",
+    "run_id_verdict": "m6_grid_verdict_v1",
+    "description": "Grid crossing search. N in {32, 64} fully (T_i x T_f); the N=128 primary pair is the M5 anchor (full N=128 grid is compute-deferred). Prep budgets reuse the N=64-calibrated equilibration gate (conservative for N=32; the primary pair was gated directly at N=128).",
+    "model": {
+      "magnetisation": 0
+    },
+    "grid": {
+      "N": [
+        32,
+        64
+      ],
+      "T_i": [
+        2.4,
+        2.8,
+        3.5,
+        5.0,
+        10.0
+      ],
+      "T_f_over_Tc": [
+        0.5,
+        0.6,
+        0.75
+      ]
+    },
+    "preparation": {
+      "kernel": "nonlocal",
+      "budgets": {
+        "2.4": 2000,
+        "2.8": 1000,
+        "3.5": 500,
+        "5.0": 250,
+        "10.0": 250
+      }
+    },
+    "schedule": {
+      "32": {
+        "t_max": 4000,
+        "n_points": 34
+      },
+      "64": {
+        "t_max": 8000,
+        "n_points": 40
+      }
+    },
+    "einf": {
+      "kernel": "nonlocal",
+      "sweeps_burn": 8000,
+      "sample_every": 120,
+      "n_samples": 30
+    },
+    "ensemble": {
+      "n_realisations": 24,
+      "seed": 70707
+    },
+    "analysis": {
+      "lower_cutoff_sweeps": 100,
+      "finite_size_fraction": 0.4,
+      "n_boot": 4000,
+      "ci": 0.95,
+      "fdr_alpha": 0.05
+    }
+  },
+  "config_hash": "75c009f211a733726db630a6663c3358307b6b419aedecbcb4c9c9cb74060ad7",
+  "seeds": {
+    "base": 70707
+  },
+  "git": {
+    "commit": "94c8ed50c505a788f2cf65513daf5fce2161da11",
+    "dirty": false,
+    "branch": "main"
+  },
+  "environment": {
+    "python_version": "3.13.7",
+    "python_implementation": "CPython",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "kawasaki2d_version": "1.0.0",
+    "numba_active": true,
+    "rng": {
+      "library": "numpy",
+      "library_version": "2.4.6",
+      "bit_generator": "PCG64"
+    },
+    "packages": {
+      "numpy": "2.4.6",
+      "scipy": "1.18.0",
+      "pyyaml": "6.0.3",
+      "PyYAML": "6.0.3",
+      "numba": "0.65.1",
+      "matplotlib": "3.11.0",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0"
+    }
+  },
+  "outputs": {
+    "grid_meta": "c742fdf1b99d43252ef9068c15c21c0877ffcb7610bfccdcc928152bbcb6326b"
+  },
+  "schema_version": "1.0",
+  "notes": "M6 grid sweep"
+}

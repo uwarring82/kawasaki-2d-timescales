@@ -1,0 +1,43 @@
+# Milestone 6 — grid search across (T_i, T_f, N).
+# Broadens the M5 primary-pair verdict to the wider pre-registered grid. For each
+# (N, T_f) cell, ensembles are run for every T_i; all hot>cold pairs are tested
+# for a directional offset-corrected inversion, and BH-FDR is applied across the
+# whole grid of per-pair tests (the deferred across-pairs FDR from M5 amendment A2).
+run_id_sweep: m6_grid_sweep_v1
+run_id_verdict: m6_grid_verdict_v1
+description: >-
+  Grid crossing search. N in {32, 64} fully (T_i x T_f); the N=128 primary pair is
+  the M5 anchor (full N=128 grid is compute-deferred). Prep budgets reuse the
+  N=64-calibrated equilibration gate (conservative for N=32; the primary pair was
+  gated directly at N=128).
+model:
+  magnetisation: 0
+grid:
+  N: [32, 64]
+  T_i: [2.4, 2.8, 3.5, 5.0, 10.0]
+  T_f_over_Tc: [0.5, 0.6, 0.75]
+preparation:
+  kernel: nonlocal
+  budgets:            # keyed by str(T_i); reuse N=64 gate (M4) — conservative for N=32
+    "2.4": 2000
+    "2.8": 1000
+    "3.5": 500
+    "5.0": 250
+    "10.0": 250
+schedule:             # per-N (keyed by str(N)); window guard trims below saturation per cell
+  "32": {t_max: 4000, n_points: 34}
+  "64": {t_max: 8000, n_points: 40}
+einf:
+  kernel: nonlocal
+  sweeps_burn: 8000
+  sample_every: 120
+  n_samples: 30
+ensemble:
+  n_realisations: 24
+  seed: 70707
+analysis:
+  lower_cutoff_sweeps: 100
+  finite_size_fraction: 0.40
+  n_boot: 4000
+  ci: 0.95
+  fdr_alpha: 0.05

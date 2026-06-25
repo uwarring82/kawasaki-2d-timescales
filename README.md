@@ -58,8 +58,11 @@ lattice and a statistically controlled simulation at a realistic size — **agre
 there is no Mpemba-like inversion in this system at the conditions studied.** A
 hotter start does not order faster here. This is a clean, well-controlled
 *negative* result, which is as scientifically valuable as a positive one would
-have been. (Scope: one operational point — `M=0`, `T_f=0.6 T_c`, the designated
-primary `T_i` pair; the wider grid is set up but deferred.)
+have been. The headline was established at one designated operational point
+(`M=0`, `T_f=0.6 T_c`, primary `T_i` pair, `N=128`) and then **stress-tested by
+four independent adversarial reviews** (no blocker; see `reviews/`). Broadening
+to the wider `(T_i, T_f, N)` grid is **in progress** — results will be reported
+here once the grid run completes.
 
 ## Model
 

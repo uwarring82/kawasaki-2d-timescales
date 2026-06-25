@@ -62,9 +62,12 @@ have been. The headline was established at one designated operational point
 (`M=0`, `T_f=0.6 T_c`, primary `T_i` pair, `N=128`), then **stress-tested by four
 independent adversarial reviews** (no blocker; see `reviews/`), and then
 **broadened by a grid search** across initial temperature, bath temperature, and
-two system sizes: of **48 hotter-vs-colder preparation pairs**, **none** shows a
-real (false-discovery-controlled) "hotter overtakes colder" inversion. The
-negative result holds across the grid, not just at the single point.
+two system sizes: of **48 hotter-vs-colder preparation pairs that have a usable
+pre-saturation window**, **none** shows a real (false-discovery-controlled)
+"hotter overtakes colder" inversion. The negative result holds across the *tested*
+grid — every `(T_i, T_f)` pair at `N ∈ {32, 64}` where a coarsening window exists.
+(12 near-critical pairs had no such window at these sizes — a finite-size
+limitation, not a physics result — and the full `N=128` grid is future work.)
 
 ## Model
 

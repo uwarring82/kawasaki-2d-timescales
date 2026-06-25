@@ -69,6 +69,7 @@ def stage_sweep(cfg, run_dir, manifest):
         sch = cfg["schedule"][str(N)]
         sweeps = protocols.log_schedule(int(sch["t_max"]), int(sch["n_points"]))
         np.save(run_dir / f"sweeps_N{N:03d}.npy", sweeps)
+        manifest.add_output(f"sweeps_N{N:03d}", run_dir / f"sweeps_N{N:03d}.npy")
         meta["schedule"][str(N)] = sweeps.tolist()
         for tfi, tfr in enumerate(Tfs):
             T_f = tfr * T_C
@@ -91,6 +92,7 @@ def stage_sweep(cfg, run_dir, manifest):
                 key = _key(N, tfr, T_i)
                 for nm, arr in (("E", E), ("LC", LC), ("LS", LS)):
                     np.save(run_dir / f"{key}_{nm}.npy", arr)
+                    manifest.add_output(f"{key}_{nm}", run_dir / f"{key}_{nm}.npy")
                 print(f"  {key}: final L_S={np.nanmean(LS[:,-1]):5.2f}  max L_S/N={np.nanmax(np.nanmean(LS,0))/N:.3f}")
     (run_dir / "grid_meta.json").write_text(json.dumps(meta, indent=2, default=str) + "\n")
     manifest.add_output("grid_meta", run_dir / "grid_meta.json")

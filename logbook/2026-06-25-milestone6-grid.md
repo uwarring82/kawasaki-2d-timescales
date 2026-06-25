@@ -60,3 +60,17 @@ verdict.
 - 24 realisations/cell is a scan-level ensemble (lower power than the 48-realisation
   primary pair); it resolves the *absence of a two-of-three signal* robustly but a
   subtle single-cell effect below this power could be missed (none indicated).
+
+## Provenance fix (post-review, bug-impact note)
+
+A release reviewer found that the M6 *sweep* driver registered only
+`grid_meta.json` in its manifest, omitting `sweeps_N*.npy` and the 90 per-cell
+`{E,LC,LS}.npy` arrays — so the central M6 data was committed and git-tracked but
+not checksummed in the manifest. This is a provenance-completeness defect, not a
+data defect (the arrays are correct and unchanged; the grid verdict is unaffected).
+
+Fix: (1) `scripts/milestone6_grid.py` now registers every output; (2) the already-
+committed `results/m6_grid_sweep_v1/manifest.json` was completed post-hoc with the
+checksums of the existing (deterministic) data files, preserving its original
+generation commit/seed/config and carrying a `notes` line recording the
+completion. No result was re-run or changed.

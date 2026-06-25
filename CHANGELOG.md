@@ -4,15 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.1] — 2026-06-25
 
-Four independent adversarial reviews of v1.0.0 (`reviews/2026-06-24-*.md`; two via
-the primed v1 brief, two via the open/unprimed v2 brief). All converge: **no
-blocker; the scoped `no_supported_inversion` headline stands.** Changes are a
-software-robustness fix, clarifications, and reproducible artifacts — not a change
-to the science. The committed `N=128` verdict is unaffected by every fix below.
+Incorporates four independent adversarial reviews of v1.0.0 (`reviews/2026-06-24-*.md`;
+two via the primed v1 brief, two via the open/unprimed v2 brief) plus a
+release-readiness review. All converge: **no blocker; the scoped
+`no_supported_inversion` headline stands.** This release adds the grid search (M6),
+a software-robustness fix, a provenance-completeness fix, and wording
+clarifications — not a change to the science. The committed `N=128` verdict is
+unaffected by every fix below.
 
 ### Fixed
+- **M6 sweep manifest provenance** (release review): the grid *sweep* driver had
+  registered only `grid_meta.json`, omitting `sweeps_N*.npy` and the 90 per-cell
+  `{E,LC,LS}.npy` arrays. `scripts/milestone6_grid.py` now registers every output;
+  the committed `results/m6_grid_sweep_v1/` manifest was completed post-hoc with
+  the checksums of the (deterministic) data, preserving its generation provenance
+  (data and verdict unchanged).
 - **Saturation-guard `IndexError`** in `scripts/milestone5_crossing.py` (found by
   the kimi v2 review): the offset-corrected bootstrap received full-length
   estimator arrays with a truncated `times` when the saturation guard clipped the
@@ -53,8 +61,11 @@ to the science. The committed `N=128` verdict is unaffected by every fix below.
 - "Spectral predicts coarsening" softened to *qualitative consistency* in both the
   technical and the plain-language README sections (two different observables; not
   a derivation).
-- Citation/README: release `v1.0.0` is "to be archived" to Zenodo (DOI minting
-  pending) rather than "is archived", until the DOI is minted.
+- Citation/README: release is "to be archived" to Zenodo (DOI minting pending)
+  rather than "is archived", until the DOI is minted.
+- README plain-language bottom line scoped to the **tested / pre-saturation** grid
+  (`N ∈ {32, 64}`, pairs with a coarsening window), noting the 12 skipped
+  near-critical pairs (finite-size) and the deferred `N=128` grid (release review).
 
 ## [1.0.0] — 2026-06-24
 
@@ -108,4 +119,5 @@ number, figure, and verdict is regenerable from a recorded
 - Full `(T_i, T_f, N)` grid with across-pairs FDR, and the `T_f` scan / secondary
   `T_i` pairs at coarsening sizes (compute) — see the M5 protocol amendment.
 
+[1.0.1]: https://github.com/uwarring82/kawasaki-2d-timescales/releases/tag/v1.0.1
 [1.0.0]: https://github.com/uwarring82/kawasaki-2d-timescales/releases/tag/v1.0.0
